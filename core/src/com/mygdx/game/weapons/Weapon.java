@@ -2,6 +2,7 @@ package com.mygdx.game.weapons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,18 +11,23 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.utilities.Rumble;
-import com.sun.org.apache.bcel.internal.Const;
 
 public class Weapon{
     public Texture current_weapon;
     public Array<Projectile> projectiles;
     public ShapeRenderer shapeRenderer;
 
+    //COLLISION
+    public Collision collision;
+
     public Weapon(){
         current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR1.png"));
         projectiles = new Array<>();
         shapeRenderer = new ShapeRenderer();
+
+        collision = new Collision();
     }
 
     public TextureRegion getWeapon(){
@@ -32,6 +38,19 @@ public class Weapon{
         TextureRegion flipped_weapon = new TextureRegion(current_weapon);
         flipped_weapon.flip(true, false);
         return flipped_weapon;
+    }
+
+    //Change Weapon Test
+    public void test(){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)){
+            current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR1.png"));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)){
+            current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR2.png"));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)){
+            current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR3.png"));
+        }
     }
 
     public void handleWeapon(OrthographicCamera camera, SpriteBatch spriteBatch, float char_x, float char_y) {
@@ -95,17 +114,25 @@ public class Weapon{
             }
 
             for(Projectile proj : projectiles){
-                proj.shootProjectile(Gdx.graphics.getDeltaTime());
+                proj.shootProjectile(Gdx.graphics.getDeltaTime(), camera);
             }
 
-            for(Projectile proj : projectiles){
-//                spriteBatch.draw(proj.getProjectileTexture(), proj.position.x, proj.position.y, 20, 20);
-                spriteBatch.draw(proj.getProjectileTexture(),
-                        proj.position.x, proj.position.y, // Position
-                        (weaponWidth - 20) / 2, (weaponHeight - 10) / 2, // Origin for rotation (center of the weapon)
-                        20, 20, // Width and height
-                        1, 1, // Scale
-                        angle);
+            for(int i = 0; i < projectiles.size; i++){
+                Projectile proj = projectiles.get(i);
+
+                //removes bullet when projectile hits wall
+                if(proj.shootProjectile(Gdx.graphics.getDeltaTime(), camera)){
+                    projectiles.removeIndex(i);
+                    i--;
+                }
+                else{
+                    spriteBatch.draw(proj.getProjectileTexture(),
+                            proj.position.x, proj.position.y, // Position
+                            (weaponWidth - 20) / 2, (weaponHeight - 10) / 2, // Origin for rotation (center of the weapon)
+                            20, 20, // Width and height
+                            1, 1, // Scale
+                            proj.angle);
+                }
             }
         }
         else{
@@ -116,30 +143,52 @@ public class Weapon{
             }
 
             for(Projectile proj : projectiles){
-                proj.shootProjectile(Gdx.graphics.getDeltaTime());
+                proj.shootProjectile(Gdx.graphics.getDeltaTime(), camera);
             }
 
-            for(Projectile proj : projectiles){
+            for(int i = 0; i < projectiles.size; i++){
+                Projectile proj = projectiles.get(i);
                 TextureRegion projectile = proj.getProjectileTexture();
                 projectile.flip(true, false);
-                spriteBatch.draw(projectile,
-                        proj.position.x, proj.position.y, // Position
-                        (weaponWidth - 20) / 2, (weaponHeight - 10) / 2, // Origin for rotation (center of the weapon)
-                        20, 20, // Width and height
-                        1, 1, // Scale
-                        proj.angle);
+
+                //removes bullet when projectile hits wall
+                if(proj.shootProjectile(Gdx.graphics.getDeltaTime(), camera)){
+                    projectiles.removeIndex(i);
+                    i--;
+                }
+                else{
+                    spriteBatch.draw(projectile,
+                            proj.position.x, proj.position.y, // Position
+                            (weaponWidth - 20) / 2, (weaponHeight - 10) / 2, // Origin for rotation (center of the weapon)
+                            20, 20, // Width and height
+                            1, 1, // Scale
+                            proj.angle);
+                }
+
+
+                //DEBUGGING
+//                collision.bulletCollision(proj);
+//                shapeRenderer.setProjectionMatrix(camera.combined);
+//                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//                shapeRenderer.setColor(Color.RED);
+//                shapeRenderer.rect(proj.position.x, proj.position.y, proj.rectangle.getWidth(), proj.rectangle.getHeight());
+//                shapeRenderer.end();
             }
         }
         if (Rumble.getRumbleTimeLeft() > 0){
             Rumble.tick(Gdx.graphics.getDeltaTime());
             camera.translate(Rumble.getPos());
         }
-        System.out.println(angle);
     }
 
     private boolean checkDirectionFacing(OrthographicCamera camera, float char_x){
         Vector3 position = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         return !(position.x - char_x > 0);
+    }
+
+    //FOR ZOMBIE COLLISION
+    public Array<Projectile> getProjectiles(){
+        return this.projectiles;
     }
 
 

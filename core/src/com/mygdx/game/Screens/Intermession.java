@@ -14,7 +14,7 @@ public class Intermession implements Screen {
 
     public Intermession() {
         batch = new SpriteBatch();
-        background = new Texture("assets/Menu/Exiled_Menu_Bg.jpg");
+        background = new Texture("assets/Pages/UpgradeScreen.jpg");
     }
 
     @Override

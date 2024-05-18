@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.TitleFight;
+import com.mygdx.game.enemies.EnemyHandler;
 import com.mygdx.game.player.Player;
 import com.mygdx.game.Screens.Intermession;
 
@@ -28,6 +29,8 @@ public class World implements Screen {
     private final float VIRTUAL_WIDTH = 1440;  // Virtual width
     private final float VIRTUAL_HEIGHT = 900;  // Virtual height
 
+    //ENEMIES
+    private EnemyHandler enemyHandler;
     private boolean intermessionScreenShown = false;
     private Intermession intermessionScreen;
 
@@ -39,6 +42,9 @@ public class World implements Screen {
         renderer = map.makeMap();
         player = new Player();
         intermessionScreen = new Intermession();
+
+        //ENEMIES
+        enemyHandler = new EnemyHandler(player.getWeapon());
     }
 
     public void show(){
@@ -82,7 +88,6 @@ public class World implements Screen {
         camera.update();// Render the map and player
     }
 
-
     public void clampCamera(){
         float playerCenterX = player.character.getX();
         float playerCenterY = player.character.getY();
@@ -99,18 +104,14 @@ public class World implements Screen {
         camera.position.y = MathUtils.clamp(playerCenterY, minY, maxY);
     }
 
-    public void showIntermessionScreen() {
-        intermessionScreenShown = true;
-    }
-
-    public void hideIntermessionScreen() {
-        intermessionScreenShown = false;
-    }
-
     public void renderData(){
         renderer.setView(camera);
         renderer.render(new int[] {0, 1});
         player.handleMovement(camera);
+
+        //ENEMIES: DEBUGGING
+        enemyHandler.handleWave(camera);
+
         renderer.render(new int[] {2});
     }
 
@@ -128,6 +129,14 @@ public class World implements Screen {
         camera.viewportHeight = VIRTUAL_HEIGHT;
         camera.zoom = 0.3f;
         camera.update();
+    }
+
+    public void showIntermessionScreen() {
+        intermessionScreenShown = true;
+    }
+
+    public void hideIntermessionScreen() {
+        intermessionScreenShown = false;
     }
 
     public void pause(){
