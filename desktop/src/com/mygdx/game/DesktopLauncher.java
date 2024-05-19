@@ -14,6 +14,7 @@ public class DesktopLauncher {
 //		config.setWindowedMode(1920, 1080);
 //		config.setResizable(true);
 //		new Lwjgl3Application(new TitleFight(), config);
+		// Start of the Main Menu
 		SwingUtilities.invokeLater(() -> {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

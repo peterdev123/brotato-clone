@@ -8,15 +8,19 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.mygdx.game.TitleFight;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  *
  * @author Peter Sylvan
  */
 public class Menu extends JFrame {
-
+    private Clip backgroundClip;
+    private Clip hoverClip, clickedClip;
     /**
      * Creates new form Menu
      */
@@ -26,7 +30,8 @@ public class Menu extends JFrame {
 
         setTitle("Exiled");
 
-        // Set the JFrame to be undecorated
+        // Set the JFrame icon
+        setIconImage(new ImageIcon("assets/Icon/ExiledIcon.jpg").getImage());
 
         // Set full-screen mode
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -45,6 +50,9 @@ public class Menu extends JFrame {
 
         // Add the background label to the content pane
         getContentPane().add(backgroundLabel, BorderLayout.CENTER);
+
+        playBackgroundMusic("assets/Audio/Menu/ExiledMainMenu.wav");
+        loadClickedSound("assets/Audio/Menu/Buttons/HoverBeep.wav");
     }
 
     /**
@@ -89,6 +97,7 @@ public class Menu extends JFrame {
         jLabel1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 onMouseHover(evt);
+                onMouseAlwaysHover(evt);
             }
         });
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -109,6 +118,7 @@ public class Menu extends JFrame {
         jLabel2.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 onMouseHover(evt);
+                onMouseAlwaysHover(evt);
             }
         });
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -129,6 +139,7 @@ public class Menu extends JFrame {
         jLabel3.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 onMouseHover(evt);
+                onMouseAlwaysHover(evt);
             }
         });
         jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -149,6 +160,11 @@ public class Menu extends JFrame {
         jButton1.setForeground(new java.awt.Color(153, 0, 0));
         jButton1.setText("QUIT");
         jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                onMouseHover(evt);
+            }
+        });
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -158,6 +174,11 @@ public class Menu extends JFrame {
         jButton2.setFont(new java.awt.Font("Monospaced", 1, 36)); // NOI18N
         jButton2.setText("CANCEL");
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                onMouseHover(evt);
+            }
+        });
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -323,6 +344,7 @@ public class Menu extends JFrame {
         jLabel10.setFont(new java.awt.Font("Monospaced", 1, 48)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("X");
+        jLabel10.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 onExitLeaderBoard(evt);
@@ -393,7 +415,7 @@ public class Menu extends JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 904, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel1)
@@ -412,39 +434,84 @@ public class Menu extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void onMouseHover(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseHover
-    // TODO add your handling code here:
-    JLabel label = (JLabel) evt.getSource();
-    label.setForeground(Color.decode("#95A8CF"));
-    label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-}//GEN-LAST:event_onMouseHover
+    private void playBackgroundMusic(String filePath) {
+        try {
+            // Open an audio input stream.
+            File soundFile = new File(filePath);
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
 
-private void onMouseExit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseExit
-    // TODO add your handling code here:
-    JLabel label = (JLabel) evt.getSource();
-    label.setForeground(Color.decode("#FFFFFF"));
-}//GEN-LAST:event_onMouseExit
+            // Get a sound clip resource.
+            backgroundClip = AudioSystem.getClip();
 
-private void onMousePlay(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMousePlay
-    // TODO add your handling code here:
-    //Close Main Menu
-    this.dispose();
+            // Open audio clip and load samples from the audio input stream.
+            backgroundClip.open(audioIn);
 
-    Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-    config.setForegroundFPS(60);
-    config.setTitle("Title Fight");
-    config.setWindowedMode(1920, 1080);
-    config.setResizable(true);
-    new Lwjgl3Application(new TitleFight(), config);
-}//GEN-LAST:event_onMousePlay
+            //Adjust volume
+            FloatControl gainControl = (FloatControl) backgroundClip.getControl(FloatControl.Type.MASTER_GAIN);
+            float volume = (float) (Math.log(0.20) / Math.log(10.0) * 20.0); // -12 dB
+            gainControl.setValue(volume);
+
+            // Loop the clip continuously.
+            backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadClickedSound(String filePath) {
+        try {
+            File soundFile = new File(filePath);
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            clickedClip = AudioSystem.getClip();
+            clickedClip.open(audioIn);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Play clicked sound
+    private void playClickedSound() {
+        if (clickedClip != null && !clickedClip.isRunning()) {
+            clickedClip.setFramePosition(0); // Rewind to start
+            clickedClip.start();
+        }
+    }
+
+    private void onMouseHover(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseHover
+        // TODO add your handling code here:
+    }//GEN-LAST:event_onMouseHover
+
+    private void onMouseExit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseExit
+        // TODO add your handling code here:
+        JLabel label = (JLabel) evt.getSource();
+        label.setForeground(Color.decode("#FFFFFF"));
+    }//GEN-LAST:event_onMouseExit
+
+    private void onMousePlay(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMousePlay
+        // TODO add your handling code here:
+        //Close Main Menu
+        playClickedSound();
+        this.dispose();
+
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setForegroundFPS(60);
+        config.setTitle("Title Fight");
+        config.setWindowedMode(1920, 1080);
+        config.setResizable(true);
+
+        config.setWindowIcon("assets/Icon/ExiledIcon.jpg");
+        new Lwjgl3Application(new TitleFight(), config);
+    }//GEN-LAST:event_onMousePlay
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        playClickedSound();
         System.exit(0);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        playClickedSound();
         jPanel1.setVisible(false);
         jLabel1.setVisible(true);
         jLabel2.setVisible(true);
@@ -453,6 +520,7 @@ private void onMousePlay(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMou
 
     private void onClickedExit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onClickedExit
         // TODO add your handling code here:
+        playClickedSound();
         jLabel1.setVisible(false);
         jLabel2.setVisible(false);
         jLabel3.setVisible(false);
@@ -461,6 +529,7 @@ private void onMousePlay(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMou
 
     private void onLeaderClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onLeaderClicked
         // TODO add your handling code here:
+        playClickedSound();
         jLabel1.setVisible(false);
         jLabel2.setVisible(false);
         jLabel3.setVisible(false);
@@ -473,11 +542,28 @@ private void onMousePlay(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMou
 
     private void onExitLeaderBoard(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onExitLeaderBoard
         // TODO add your handling code here:
+        playClickedSound();
         jScrollPane1.setVisible(false);
         jLabel1.setVisible(true);
         jLabel2.setVisible(true);
         jLabel3.setVisible(true);
     }//GEN-LAST:event_onExitLeaderBoard
+
+    private void onMouseAlwaysHover(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseAlwaysHover
+        // TODO add your handling code here:
+        JLabel label = (JLabel) evt.getSource();
+        label.setForeground(Color.decode("#95A8CF"));
+        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_onMouseAlwaysHover
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (backgroundClip != null) {
+            backgroundClip.stop();
+            backgroundClip.close();
+        }
+    }
 
     /**
      * @param args the command line arguments

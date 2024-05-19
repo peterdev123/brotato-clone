@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Screens.Pause;
 import com.mygdx.game.TitleFight;
 import com.mygdx.game.enemies.EnemyHandler;
 import com.mygdx.game.player.Player;
@@ -33,6 +34,8 @@ public class World implements Screen {
     private EnemyHandler enemyHandler;
     private boolean intermessionScreenShown = false;
     private Intermession intermessionScreen;
+    private boolean gamePaused = false;
+    private Pause pauseScreen;
 
     public World(TitleFight titleFight){
         this.titleFight = titleFight;
@@ -42,6 +45,7 @@ public class World implements Screen {
         renderer = map.makeMap();
         player = new Player();
         intermessionScreen = new Intermession();
+        pauseScreen = new Pause();
 
         //ENEMIES
         enemyHandler = new EnemyHandler(player.getWeapon());
@@ -59,17 +63,40 @@ public class World implements Screen {
         Gdx.gl.glClearColor(24 / 255f, 20 / 255f, 37 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        //DEBUG
+        //Render the intermession screen when true
         if (intermessionScreenShown) {
             intermessionScreen.render(delta);
-            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            //Hides the intermession screen when "ESC" pressed
+            if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
                 hideIntermessionScreen();
+                intermessionScreen.hide();
             }
             return; // Stop rendering the game world if the intermission screen is shown
         }
 
+        //Pause Screen
+        if (gamePaused) {
+            this.pause();
+            pauseScreen.render(delta);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                gamePaused = false;
+                this.resume();
+            }
+            return;
+        }
+
+        //Pauses the Screen
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            gamePaused = true;
+        }
+
+        //DEBUG
+        //Shows the intermession screen when "ESC" pressed
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
             if (!intermessionScreenShown) {
                 showIntermessionScreen();
+                intermessionScreen.show();
             }
         }
 
