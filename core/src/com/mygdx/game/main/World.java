@@ -34,7 +34,7 @@ public class World implements Screen {
     private EnemyHandler enemyHandler;
     private boolean intermessionScreenShown = false;
     private Intermession intermessionScreen;
-    private boolean gamePaused = false;
+    public boolean gamePaused = false;
     private Pause pauseScreen;
 
     public World(TitleFight titleFight){
@@ -45,7 +45,7 @@ public class World implements Screen {
         renderer = map.makeMap();
         player = new Player();
         intermessionScreen = new Intermession();
-        pauseScreen = new Pause();
+        pauseScreen = new Pause(this);
 
         //ENEMIES
         enemyHandler = new EnemyHandler(player.getWeapon());
@@ -77,18 +77,15 @@ public class World implements Screen {
 
         //Pause Screen
         if (gamePaused) {
-            this.pause();
             pauseScreen.render(delta);
-            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-                gamePaused = false;
-                this.resume();
-            }
+            pauseScreen.setGamePaused(gamePaused);
             return;
         }
 
         //Pauses the Screen
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             gamePaused = true;
+
         }
 
         //DEBUG
