@@ -7,7 +7,7 @@ package Menu;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.mygdx.game.TitleFight;
-import com.mygdx.game.Screens.Pause;
+
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -501,7 +501,6 @@ public class Menu extends JFrame {
 
         config.setWindowIcon("assets/Icon/ExiledIcon.jpg");
         new Lwjgl3Application(new TitleFight(), config);
-
     }//GEN-LAST:event_onMousePlay
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
