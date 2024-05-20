@@ -29,8 +29,11 @@ public class Intermession implements Screen {
     private Texture placeholder;
     private Stage btnStage;
     private Skin nextWaveSkin;
+    private Skin plusButtonSkin;
+    private int[] progressBar;
 
     public Intermession() {
+        progressBar = new int[5];
         batch = new SpriteBatch();
         background = new Texture("assets/Pages/UpgradeScreen.jpg");
         placeholder = new Texture("assets/Pages/Progress/prog00.png");
@@ -41,14 +44,27 @@ public class Intermession implements Screen {
             progTextures[i] = new Texture(texturePath);
         }
 
-        // Load the skin
+        // Load the skin for the next wave button
         nextWaveSkin = new Skin(Gdx.files.internal("assets/jsonFiles/nextWaveButton.json"), new TextureAtlas(Gdx.files.internal("assets/jsonFiles/nextWaveButton.atlas")));
+
+        // Load the skin for the plus buttons
+        plusButtonSkin = new Skin(Gdx.files.internal("assets/jsonFiles/plusButton.json"), new TextureAtlas(Gdx.files.internal("assets/jsonFiles/plusButton.atlas")));
 
         // Create the stage and set it as the input processor
         btnStage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(btnStage);
 
-        // Create a button
+        // Create the next wave button
+        createNextWaveButton();
+
+        // Create and position the plus buttons
+        createPlusButtons();
+
+        // Initialize the stage
+        stage = new Stage(new ScreenViewport());
+    }
+
+    private void createNextWaveButton() {
         Button nextWaveButton1 = new Button(nextWaveSkin);
 
         // Set button size
@@ -68,13 +84,69 @@ public class Intermession implements Screen {
 
         // Add the button to the stage
         btnStage.addActor(nextWaveButton1);
-        // Initialize the stage
-        stage = new Stage(new ScreenViewport());
+    }
+
+    private void createPlusButtons() {
+        // Assuming the button size is 140x140, adjust if needed
+        float buttonWidth = 140;
+        float buttonHeight = 140;
+
+        // Calculate starting position to center the buttons vertically
+        float verticalGap = 50; // Increased gap between buttons
+        float startY = (Gdx.graphics.getHeight() - (5 * buttonHeight + 4 * verticalGap)) / 2;
+        float centerX = (Gdx.graphics.getWidth() - buttonWidth) / 2;
+
+        for (int i = 0; i < 5; i++) {
+            Button plusButton = new Button(plusButtonSkin);
+
+            // Set button size
+            plusButton.setSize(buttonWidth, buttonHeight);
+
+            // Position the button
+            plusButton.setPosition(centerX + 110, startY + i * (buttonHeight + verticalGap));
+
+            // Add a listener to handle button clicks
+            final int buttonIndex = i; // Use final or effectively final variable
+            plusButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    // Handle the button click event
+                    System.out.println("Plus Button " + buttonIndex + " clicked!");
+                    if (progressBar[buttonIndex] < 9) {
+                        progressBar[buttonIndex]++;
+                    }
+                    for (int i = 0; i < 5; i++) {
+                        System.out.print(progressBar[i] + " ");
+                    }
+                    System.out.println();
+                }
+            });
+
+            // Add the button to the stage
+            btnStage.addActor(plusButton);
+        }
     }
 
     @Override
     public void show() {
         playBackgroundMusic("assets/Audio/UpgradeScreen/UpgradeMenuTheme.wav");
+    }
+
+    private void updateProgressBar() {
+        Texture hpProg = progTextures[progressBar[0]];
+        Texture dmgProg = progTextures[progressBar[1]];
+        Texture frrProg = progTextures[progressBar[2]];
+        Texture spdProg = progTextures[progressBar[3]];
+        Texture armProg = progTextures[progressBar[4]];
+
+        float newWidth = (float) (placeholder.getWidth() * 1.3);
+        float newHeight = (float) (placeholder.getHeight() * 1.1);
+
+        batch.draw(hpProg, 320, 865, newWidth, newHeight);
+        batch.draw(dmgProg, 320, 685, newWidth, newHeight);
+        batch.draw(frrProg, 320, 485, newWidth, newHeight);
+        batch.draw(spdProg, 320, 305, newWidth, newHeight);
+        batch.draw(armProg, 320, 105, newWidth, newHeight);
     }
 
     @Override
@@ -85,24 +157,8 @@ public class Intermession implements Screen {
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        boolean kKeyPressed = Gdx.input.isKeyPressed(Input.Keys.K);
-        if (kKeyPressed && !prevKKeyPressed) {
-            currentProgIndex = (currentProgIndex + 1) % progTextures.length;
-        }
-        prevKKeyPressed = kKeyPressed;
-
-        Texture currentProgTexture = progTextures[currentProgIndex];
-
-
-        float newWidth = (float) (placeholder.getWidth() * 1.3);
-        float newHeight = (float) (placeholder.getHeight() * 1.1);
-
-        batch.draw(currentProgTexture, 320, 865, newWidth, newHeight);
-        batch.draw(currentProgTexture, 320, 685,newWidth,newHeight);
-        batch.draw(currentProgTexture, 320, 485,newWidth,newHeight);
-        batch.draw(currentProgTexture, 320, 305,newWidth,newHeight);
-        batch.draw(currentProgTexture, 320, 105,newWidth,newHeight);
-
+        // Update the progress bar before drawing
+        updateProgressBar();
         batch.end();
 
         // Update and draw the stage
@@ -112,6 +168,59 @@ public class Intermession implements Screen {
         // Draw the UI components
         btnStage.act(Gdx.graphics.getDeltaTime());
         btnStage.draw();
+
+        // Handle button click based on mouse coordinates
+        if (Gdx.input.justTouched()) {
+            float mouseX = Gdx.input.getX();
+            float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY(); // Invert Y coordinate
+
+            // Check if the mouse coordinates are within the bounds of the button
+            if (isMouseOverButton(mouseX, mouseY)) {
+                // Handle button click event here
+                System.out.println("Button clicked!");
+            }
+        }
+    }
+
+    // Check if the mouse coordinates are over the button
+    private boolean isMouseOverButton(float mouseX, float mouseY) {
+        // Define the boundaries of the button (adjust according to your button's position and size)
+        float buttonX = (float) Math.floor(Gdx.graphics.getWidth() / 2) + 65; // X position of the button
+        float buttonWidth = 100; // Width of the button
+        float buttonHeight = 110; // Height of the button
+
+        if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
+            mouseY >= 860 && mouseY <= 860 + buttonHeight) {
+            if (progressBar[0] < 9) {
+                progressBar[0]++;
+                return true;
+            }
+        } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
+                mouseY >= 660 && mouseY <= 660 + buttonHeight) {
+            if (progressBar[1] < 9) {
+                progressBar[1]++;
+                return true;
+            }
+        } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
+                mouseY >= 475 && mouseY <= 475 + buttonHeight) {
+            if (progressBar[2] < 9) {
+                progressBar[2]++;
+                return true;
+            }
+        } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
+                mouseY >= 285 && mouseY <= 285 + buttonHeight) {
+            if (progressBar[3] < 9) {
+                progressBar[3]++;
+                return true;
+            }
+        } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
+                mouseY >= 90 && mouseY <= 90 + buttonHeight) {
+            if (progressBar[4] < 9) {
+                progressBar[4]++;
+                return true;
+            }
+        }
+        return false;
     }
 
     private void playBackgroundMusic(String filePath) {
@@ -165,6 +274,6 @@ public class Intermession implements Screen {
         }
         btnStage.dispose();
         nextWaveSkin.dispose();
-        stopBackgroundMusic();
+        plusButtonSkin.dispose();
     }
 }
