@@ -30,7 +30,8 @@ public class Player{
     private Weapon weaponHandler;
 
     //Player Attributes
-    private int health;
+    private float maxHealth;
+    private float health;
     private int armor;
     private int coins;
     private float damage_multiplier;
@@ -92,7 +93,8 @@ public class Player{
         run_inverse = new Texture(Gdx.files.internal("animations/run_inverse_test.png"));
 
         //PLAYER ATTRIBUTES
-        health = 30;
+        maxHealth = 30;
+        health = maxHealth;
         coins = 0;
         damage_multiplier = 1.0f;
         armor = 0;
@@ -105,11 +107,14 @@ public class Player{
 
     //SET HP BASED ON STATS
     private void setHealth() {
-        health = 30 + (intermessionData.getHpData() * 2);
-        if (health == 48) {
-            health = 50;
+        health = health + (intermessionData.getHpData() * 2);
+        if (health > maxHealth) {
+            maxHealth = health;
         }
+
     }
+
+
 
     //SET ARMOR BASED ON STATS
     private void setArmor() {
@@ -126,14 +131,16 @@ public class Player{
     private void setDamage_multiplier() {
         damage_multiplier = 1 + (intermessionData.getDamageData() * 0.2f);
     }
-
-    public void handleMovement(OrthographicCamera camera){
-        stateTime += Gdx.graphics.getDeltaTime() * 0.30f;
-        TextureRegion currentFrame = null;
+    public void updatePlayerStats(){
         setSpeed();
         setHealth();
         setArmor();
         setDamage_multiplier();
+    }
+    public void handleMovement(OrthographicCamera camera){
+        stateTime += Gdx.graphics.getDeltaTime() * 0.30f;
+        TextureRegion currentFrame = null;
+
           //debugging
 //        shapeRendererLOS.setProjectionMatrix(camera.combined);
 //        shapeRendererLOS.begin(ShapeRenderer.ShapeType.Filled);
@@ -228,6 +235,33 @@ public class Player{
 
     public float getMultiplier(){
         return damage_multiplier;
+    }
+
+    public void decreaseHealth(float amount) {
+        health -= amount;
+        if (health < 0) {
+            health = 0;
+        }
+    }
+
+
+    public void increaseHealth(float amount) {
+        health += amount;
+        if (health > maxHealth) {
+            maxHealth = health;
+        }
+    }
+
+    public float getHealthPercentage() {
+        return health / maxHealth;
+    }
+
+    public float getCurrentHealth(){
+        return health;
+    }
+
+    public float getMaxHealth(){
+        return maxHealth;
     }
 
 }

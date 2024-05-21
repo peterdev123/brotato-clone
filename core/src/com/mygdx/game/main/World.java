@@ -31,6 +31,11 @@ public class World implements Screen {
     private SpriteBatch spriteBatch;
     private Player player;
 
+    private Texture hpbarTexture;
+    private Sprite hpbarSprite;
+    private float hpbarWidth;
+    private final float hpbarHeight;
+
     private final float CAMERA_SPEED = 150.0f;
     private final float VIRTUAL_WIDTH = 1440;  // Virtual width
     private final float VIRTUAL_HEIGHT = 900;  // Virtual height
@@ -51,7 +56,7 @@ public class World implements Screen {
 
     // Wave timer
     private int currentWave = 1;
-    private float waveTimer = 30; // Duration of each wave in seconds
+    private float waveTimer = 5; // Duration of each wave in seconds
     private BitmapFont font;
 
     public World(TitleFight titleFight) {
@@ -60,9 +65,15 @@ public class World implements Screen {
         character = new Sprite(new Texture("assets/Full body animated characters/Char 4/no hands/idle_0.png"));
         spriteBatch = new SpriteBatch();
         renderer = map.makeMap();
+        hpbarTexture = new Texture("assets/Extras/hpbar2.png");
+        hpbarSprite = new Sprite(hpbarTexture);
+        hpbarWidth = hpbarSprite.getWidth();
+        hpbarHeight = hpbarSprite.getHeight();
         intermissionScreen = new Intermession();
         player = new Player(intermissionScreen);
         pauseScreen = new Pause(this);
+
+
 
         // ENEMIES
         enemyHandler = new EnemyHandler(player.getWeapon());
@@ -126,6 +137,7 @@ public class World implements Screen {
                 hideIntermissionScreen();
                 playBackgroundMusic0("assets/Audio/Game/BattleTheme.wav");
                 intermissionScreen.hide();
+                player.updatePlayerStats();
             }
             return; // Stop rendering the game world if the intermission screen is shown
         }
@@ -175,8 +187,9 @@ public class World implements Screen {
 
         renderer.render(new int[]{2});
 
-        // Render wave timer
-        renderWaveTimer();
+
+        renderData();
+
 
         camera.update();
     }
@@ -198,14 +211,43 @@ public class World implements Screen {
     }
 
     public void renderData() {
-        renderer.setView(camera);
-        renderer.render(new int[]{0, 1});
-        player.handleMovement(camera);
+        // gi comment out ky mu max si player ambot ngnu
+//        renderer.setView(camera);
+//        renderer.render(new int[]{0, 1});
+//        player.handleMovement(camera);
+        spriteBatch.begin();
+        // PRA HP HEALTH PANGUTANA LNG NKO PRA UPDATE2 NIYA KY LIBOG JD KUN E REDRAW NA SIYA NGA MAGBASE SA PLAYER HP
+        if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
+            hpbarWidth -= 100;
+            player.decreaseHealth(10);
+            System.out.println("player health percentage: " + player.getHealthPercentage());
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+            hpbarWidth += 100;
+            player.increaseHealth(10);
+            System.out.println("player health percentage: " + player.getHealthPercentage());
+            if (hpbarWidth < 0) {
+                hpbarWidth = 0;
+            }
+        }
 
+        String timerText = "Wave " + currentWave + ": " + (int) waveTimer;
+        font.draw(spriteBatch, timerText, ((float) Gdx.graphics.getWidth() / 2) - 150, Gdx.graphics.getHeight() - 50);
+
+        // Draw the HP bar at the top left corner
+        hpbarSprite.setSize(hpbarWidth, hpbarHeight);
+        hpbarSprite.setPosition(10, Gdx.graphics.getHeight() - hpbarHeight - 10); // Top left corner
+        hpbarSprite.draw(spriteBatch);
+
+        // Draw current health and total health text
+        String healthText = player.getCurrentHealth() + "/" + player.getMaxHealth();
+        font.draw(spriteBatch, healthText, 20, Gdx.graphics.getHeight() - hpbarHeight - 30);
+        spriteBatch.end();
         // ENEMIES: DEBUGGING
-        enemyHandler.handleWave(camera);
-
-        renderer.render(new int[]{2});
+        // gi comment out ky mu max si player ambot ngnu
+//        enemyHandler.handleWave(camera);
+//
+//        renderer.render(new int[]{2});
     }
 
     public void zoom() {
@@ -257,10 +299,5 @@ public class World implements Screen {
         spriteBatch.dispose(); // Don't forget to dispose the spriteBatch
     }
 
-    private void renderWaveTimer() {
-        spriteBatch.begin();
-        String timerText = "Wave " + currentWave + ": " + (int) waveTimer;
-        font.draw(spriteBatch, timerText, ((float) Gdx.graphics.getWidth() / 2) - 150, Gdx.graphics.getHeight() - 50);
-        spriteBatch.end();
-    }
+
 }

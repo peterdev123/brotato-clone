@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.player.Player;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -34,6 +35,7 @@ public class Intermession implements Screen {
     private BitmapFont font, statFont;
     private int statPoints;
     private boolean intermessionShown;
+    private Player player;
 
     public Intermession() {
         progressBar = new int[5];
@@ -42,6 +44,7 @@ public class Intermession implements Screen {
         statPoints = 0;
         background = new Texture("assets/Pages/UpgradeScreen.jpg");
         placeholder = new Texture("assets/Pages/Progress/prog00.png");
+        player = new Player(this);
 
         progTextures = new Texture[10]; // Assuming you have 10 prog images
         for (int i = 0; i < progTextures.length; i++) {
@@ -271,9 +274,11 @@ public class Intermession implements Screen {
         }
 
         float btnHeight = ((float) Gdx.graphics.getHeight() / 2) - 450;
-
+        // next wave button
         if (mouseX >= 1420 && mouseX <= 1670 &&
             mouseY >= btnHeight && mouseY <= btnHeight + 110) {
+            System.out.println( progressBar[0] + progressBar[1] + progressBar[2] + progressBar[3] + progressBar[4] );
+            player.updatePlayerStats();
             this.setIntermessionShown(false);
         }
         return false;
