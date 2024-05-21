@@ -31,11 +31,15 @@ public class Intermession implements Screen {
     private Skin nextWaveSkin;
     private Skin plusButtonSkin;
     private int[] progressBar;
-    private BitmapFont font;
+    private BitmapFont font, statFont;
+    private int statPoints;
+    private boolean intermessionShown;
 
     public Intermession() {
         progressBar = new int[5];
         batch = new SpriteBatch();
+        intermessionShown = false;
+        statPoints = 0;
         background = new Texture("assets/Pages/UpgradeScreen.jpg");
         placeholder = new Texture("assets/Pages/Progress/prog00.png");
 
@@ -55,6 +59,9 @@ public class Intermession implements Screen {
         font = new BitmapFont(); // This uses the default font included with LibGDX
         font.setColor(Color.WHITE); // Set the font color to white (you can change this)
         font.getData().setScale(3); // Scale the font (adjust as necessary)
+        statFont = new BitmapFont();
+        statFont.setColor(Color.WHITE);
+        statFont.getData().setScale(3);
 
         // Create the stage and set it as the input processor
         btnStage = new Stage(new ScreenViewport());
@@ -68,6 +75,14 @@ public class Intermession implements Screen {
 
         // Initialize the stage
         stage = new Stage(new ScreenViewport());
+    }
+
+    public void setIntermessionShown(boolean isShown) {
+        this.intermessionShown = isShown;
+    }
+
+    public boolean getIntermessionShown() {
+        return intermessionShown;
     }
 
     private void createNextWaveButton() {
@@ -85,6 +100,7 @@ public class Intermession implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 // Handle the button click event
                 System.out.println("Next Wave button clicked!");
+                intermessionShown = false;
             }
         });
 
@@ -135,6 +151,7 @@ public class Intermession implements Screen {
 
     @Override
     public void show() {
+        this.setIntermessionShown(true);
         playBackgroundMusic("assets/Audio/UpgradeScreen/UpgradeMenuTheme.wav");
     }
 
@@ -172,6 +189,10 @@ public class Intermession implements Screen {
             font.draw(batch, progressText, 1700, Gdx.graphics.getHeight() - 240 - i * 70);
         }
 
+        // Draw the stat points
+        String statCurrPoints = "Stat Points: " + statPoints;
+        statFont.draw(batch, statCurrPoints, 1420, ((float) Gdx.graphics.getHeight() / 2) - 200);
+
         batch.end();
 
         // Update and draw the stage
@@ -204,36 +225,62 @@ public class Intermession implements Screen {
 
         if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
             mouseY >= 860 && mouseY <= 860 + buttonHeight) {
-            if (progressBar[0] < 9) {
-                progressBar[0]++;
-                return true;
+            if (statPoints > 0) {
+                if (progressBar[0] < 9) {
+                    progressBar[0]++;
+                    statPoints--;
+                    return true;
+                }
             }
         } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                 mouseY >= 660 && mouseY <= 660 + buttonHeight) {
-            if (progressBar[1] < 9) {
-                progressBar[1]++;
-                return true;
+            if (statPoints > 0) {
+                if (progressBar[1] < 9) {
+                    progressBar[1]++;
+                    statPoints--;
+                    return true;
+                }
             }
         } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                 mouseY >= 475 && mouseY <= 475 + buttonHeight) {
-            if (progressBar[2] < 9) {
-                progressBar[2]++;
-                return true;
+            if (statPoints > 0) {
+                if (progressBar[2] < 9) {
+                    progressBar[2]++;
+                    statPoints--;
+                    return true;
+                }
             }
         } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                 mouseY >= 285 && mouseY <= 285 + buttonHeight) {
-            if (progressBar[3] < 9) {
-                progressBar[3]++;
-                return true;
+            if (statPoints > 0) {
+                if (progressBar[3] < 9) {
+                    progressBar[3]++;
+                    statPoints--;
+                    return true;
+                }
             }
         } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                 mouseY >= 90 && mouseY <= 90 + buttonHeight) {
-            if (progressBar[4] < 9) {
-                progressBar[4]++;
-                return true;
+            if (statPoints > 0) {
+                if (progressBar[4] < 9) {
+                    progressBar[4]++;
+                    statPoints--;
+                    return true;
+                }
             }
         }
+
+        float btnHeight = ((float) Gdx.graphics.getHeight() / 2) - 450;
+
+        if (mouseX >= 1420 && mouseX <= 1670 &&
+            mouseY >= btnHeight && mouseY <= btnHeight + 110) {
+            this.setIntermessionShown(false);
+        }
         return false;
+    }
+
+    public void setStatPoints(int points) {
+        statPoints += points;
     }
 
     private void playBackgroundMusic(String filePath) {
@@ -296,6 +343,7 @@ public class Intermession implements Screen {
     @Override
     public void hide() {
         stopBackgroundMusic();
+        this.setIntermessionShown(false);
     }
 
     @Override

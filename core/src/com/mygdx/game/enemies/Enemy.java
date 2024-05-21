@@ -28,6 +28,9 @@ public class Enemy {
         hitbox = new Rectangle(position.x + 10, position.y + 10, size.x - 20, size.y - 20);
     }
 
+    public void setHealth() {}
+
+
     public Rectangle getEnemyHitbox(){
         return hitbox;
     }
