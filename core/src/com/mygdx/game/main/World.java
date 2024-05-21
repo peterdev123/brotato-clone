@@ -16,6 +16,11 @@ import com.mygdx.game.TitleFight;
 import com.mygdx.game.enemies.EnemyHandler;
 import com.mygdx.game.player.Player;
 import com.mygdx.game.Screens.Intermession;
+import sun.security.util.FilePaths;
+
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 
 public class World implements Screen {
     private TitleFight titleFight;
@@ -32,10 +37,17 @@ public class World implements Screen {
 
     //ENEMIES
     private EnemyHandler enemyHandler;
+
+    //Intermession
     private boolean intermessionScreenShown = false;
     private Intermession intermessionScreen;
+
+    //Pause
     public boolean gamePaused = false;
     private Pause pauseScreen;
+
+    //BG music
+    private Clip bgclip0;
 
     public World(TitleFight titleFight){
         this.titleFight = titleFight;
@@ -47,8 +59,10 @@ public class World implements Screen {
         intermessionScreen = new Intermession();
         pauseScreen = new Pause(this);
 
+
         //ENEMIES
         enemyHandler = new EnemyHandler(player.getWeapon());
+        playBackgroundMusic0("assets/Audio/Game/BattleTheme.wav");
     }
 
     public void show(){
@@ -57,6 +71,37 @@ public class World implements Screen {
         camera.zoom = .3f;
         player.character.setPosition(280, 200);
         camera.position.set(player.character.getX(), player.character.getY(), 0);
+    }
+
+    public void playBackgroundMusic0(String filePath) {
+        try {
+            // Open an audio input stream.
+            File soundFile = new File(filePath);
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+
+            // Get a sound clip resource.
+            bgclip0 = AudioSystem.getClip();
+
+            // Open audio clip and load samples from the audio input stream.
+            bgclip0.open(audioIn);
+
+            //Adjust volume
+            FloatControl gainControl = (FloatControl) bgclip0.getControl(FloatControl.Type.MASTER_GAIN);
+            float volume = (float) (Math.log(0.1) / Math.log(10.0) * 20.0); // -16 dB
+            gainControl.setValue(volume);
+
+            // Loop the clip continuously.
+            bgclip0.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopBackgroundMusic0() {
+        if (bgclip0 != null && bgclip0.isRunning()) {
+            bgclip0.stop();
+            bgclip0.close();
+        }
     }
 
     public void render(float delta){
@@ -70,6 +115,7 @@ public class World implements Screen {
             //Hides the intermession screen when "ESC" pressed
             if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
                 hideIntermessionScreen();
+                playBackgroundMusic0("assets/Audio/Game/BattleTheme.wav");
                 intermessionScreen.hide();
             }
             return; // Stop rendering the game world if the intermission screen is shown
@@ -85,13 +131,14 @@ public class World implements Screen {
         //Pauses the Screen
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             gamePaused = true;
-
+            stopBackgroundMusic0();
         }
 
         //DEBUG
         //Shows the intermession screen when "ESC" pressed
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
             if (!intermessionScreenShown) {
+                stopBackgroundMusic0();
                 showIntermessionScreen();
                 intermessionScreen.show();
             }
@@ -172,7 +219,7 @@ public class World implements Screen {
     }
 
     public void hide(){
-        dispose();
+        stopBackgroundMusic0();
     }
 
     public void dispose(){

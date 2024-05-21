@@ -44,11 +44,11 @@ public class Pause implements Screen {
             batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
                 world.gamePaused = false;
-
+                world.playBackgroundMusic0("assets/Audio/Game/BattleTheme.wav");
             }
         } else if (counter == 1) {
             batch.draw(background2, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//            if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
+            if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
 //                SwingUtilities.invokeLater(() -> {
 //                    try {
 //                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -60,7 +60,8 @@ public class Pause implements Screen {
 //                    menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //                    menu.setVisible(true);
 //                });
-//            }
+                System.exit(0);
+            }
 
         }
         batch.end();

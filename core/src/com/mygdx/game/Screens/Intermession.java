@@ -3,8 +3,10 @@ package com.mygdx.game.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -23,14 +25,13 @@ public class Intermession implements Screen {
     private Texture background;
     private Clip backgroundClip;
     private Texture[] progTextures;
-    private int currentProgIndex = 0;
     private Stage stage;
-    private boolean prevKKeyPressed = false;
     private Texture placeholder;
     private Stage btnStage;
     private Skin nextWaveSkin;
     private Skin plusButtonSkin;
     private int[] progressBar;
+    private BitmapFont font;
 
     public Intermession() {
         progressBar = new int[5];
@@ -49,6 +50,11 @@ public class Intermession implements Screen {
 
         // Load the skin for the plus buttons
         plusButtonSkin = new Skin(Gdx.files.internal("assets/jsonFiles/plusButton.json"), new TextureAtlas(Gdx.files.internal("assets/jsonFiles/plusButton.atlas")));
+
+        // Initialize the font
+        font = new BitmapFont(); // This uses the default font included with LibGDX
+        font.setColor(Color.WHITE); // Set the font color to white (you can change this)
+        font.getData().setScale(3); // Scale the font (adjust as necessary)
 
         // Create the stage and set it as the input processor
         btnStage = new Stage(new ScreenViewport());
@@ -159,6 +165,13 @@ public class Intermession implements Screen {
 
         // Update the progress bar before drawing
         updateProgressBar();
+
+        // Draw the progress text
+        for (int i = 0; i < progressBar.length; i++) {
+            String progressText = Integer.toString(progressBar[i]);
+            font.draw(batch, progressText, 1700, Gdx.graphics.getHeight() - 240 - i * 70);
+        }
+
         batch.end();
 
         // Update and draw the stage
