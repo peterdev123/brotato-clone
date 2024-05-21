@@ -19,7 +19,7 @@ import com.mygdx.game.weapons.Weapon;
 public class Player{
     //CONSTANTS
     private float PLAYER_WIDTH = 84, PLAYER_HEIGHT = 84, COLLISION_WIDTH = 5, COLLISION_HEIGHT = 5,
-            LOS_WIDTH = 180, LOS_HEIGHT = 180;
+                  LOS_WIDTH = 180, LOS_HEIGHT = 180;
     private float centerX = Gdx.graphics.getWidth() / 2f;
     private float centerY = Gdx.graphics.getHeight() / 2f;
 
@@ -30,8 +30,7 @@ public class Player{
     private Weapon weaponHandler;
 
     //Player Attributes
-    private float maxHealth;
-    private float health;
+    private int health;
     private int armor;
     private int coins;
     private float damage_multiplier;
@@ -93,17 +92,18 @@ public class Player{
         run_inverse = new Texture(Gdx.files.internal("animations/run_inverse_test.png"));
 
         //PLAYER ATTRIBUTES
-        maxHealth = 50;
         health = 30;
         coins = 0;
         damage_multiplier = 1.0f;
         armor = 0;
     }
 
+    //SET SPEED BASED ON STATS
     private void setSpeed() {
         speed = (55 + (intermessionData.getSpeedData() * 4)) * 2;
     }
 
+    //SET HP BASED ON STATS
     private void setHealth() {
         health = 30 + (intermessionData.getHpData() * 2);
         if (health == 48) {
@@ -111,18 +111,30 @@ public class Player{
         }
     }
 
+    //SET ARMOR BASED ON STATS
     private void setArmor() {
         armor = intermessionData.getArmorData();
+    }
+
+    //DEBUG
+//    private void showStats() {
+//        System.out.print(health + " " + damage_multiplier + " " + speed + " " + armor);
+//        System.out.println();
+//    }
+
+    //SET DAMAGE BASED ON STATS
+    private void setDamage_multiplier() {
+        damage_multiplier = 1 + (intermessionData.getDamageData() * 0.2f);
     }
 
     public void handleMovement(OrthographicCamera camera){
         stateTime += Gdx.graphics.getDeltaTime() * 0.30f;
         TextureRegion currentFrame = null;
         setSpeed();
-//        setHealth(); gi comment out nko ky disha mu update tungod ani
+        setHealth();
         setArmor();
-
-        //debugging
+        setDamage_multiplier();
+          //debugging
 //        shapeRendererLOS.setProjectionMatrix(camera.combined);
 //        shapeRendererLOS.begin(ShapeRenderer.ShapeType.Filled);
 //        shapeRendererLOS.setColor(Color.BLUE);
@@ -215,35 +227,7 @@ public class Player{
     }
 
     public float getMultiplier(){
-        return damage_multiplier + (intermessionData.getDamageData() * 0.2f);
-    }
-
-
-    public void decreaseHealth(float amount) {
-        health -= amount;
-        if (health < 0) {
-            health = 0;
-        }
-    }
-
-
-    public void increaseHealth(float amount) {
-        health += amount;
-        if (health > maxHealth) {
-            maxHealth = health;
-        }
-    }
-
-    public float getHealthPercentage() {
-        return health / maxHealth;
-    }
-
-    public float getCurrentHealth(){
-        return health;
-    }
-
-    public float getMaxHealth(){
-        return maxHealth;
+        return damage_multiplier;
     }
 
 }
