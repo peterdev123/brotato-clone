@@ -262,6 +262,26 @@ public class Intermession implements Screen {
         }
     }
 
+    public int getHpData() {
+        return progressBar[0];
+    }
+
+    public int getDamageData() {
+        return progressBar[1];
+    }
+
+    public int getFireRateData() {
+        return progressBar[2];
+    }
+
+    public int getSpeedData() {
+        return progressBar[3];
+    }
+
+    public int getArmorData() {
+        return progressBar[4];
+    }
+
     @Override
     public void resize(int width, int height) {
         btnStage.getViewport().update(width, height, true);

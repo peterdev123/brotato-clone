@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Screens.Intermession;
 import com.mygdx.game.utilities.Animator;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.weapons.Weapon;
@@ -30,6 +31,7 @@ public class Player{
 
     //Player Attributes
     private int health;
+    private int armor;
     private int coins;
     private float damage_multiplier;
 
@@ -61,7 +63,10 @@ public class Player{
     private ShapeRenderer shapeRendererCollision;
     private ShapeRenderer shapeRendererLOS;
 
-    public Player(){
+    private Intermession intermessionData;
+
+    public Player(Intermession intermessionData){
+        this.intermessionData = intermessionData;
         character = new Sprite(new Texture("assets/Full body animated characters/Char 4/no hands/idle_0.png"));
         character.setScale(-2f);
         spriteBatch = new SpriteBatch();
@@ -89,13 +94,31 @@ public class Player{
         //PLAYER ATTRIBUTES
         health = 30;
         coins = 0;
-        damage_multiplier = 1;
+        damage_multiplier = 1.0f;
+        armor = 0;
+    }
+
+    private void setSpeed() {
+        speed = (55 + (intermessionData.getSpeedData() * 4)) * 2;
+    }
+
+    private void setHealth() {
+        health = 30 + (intermessionData.getHpData() * 2);
+        if (health == 48) {
+            health = 50;
+        }
+    }
+
+    private void setArmor() {
+        armor = intermessionData.getArmorData();
     }
 
     public void handleMovement(OrthographicCamera camera){
         stateTime += Gdx.graphics.getDeltaTime() * 0.30f;
         TextureRegion currentFrame = null;
-
+        setSpeed();
+        setHealth();
+        setArmor();
 
           //debugging
 //        shapeRendererLOS.setProjectionMatrix(camera.combined);
@@ -190,7 +213,7 @@ public class Player{
     }
 
     public float getMultiplier(){
-        return damage_multiplier;
+        return damage_multiplier + (intermessionData.getDamageData() * 0.2f);
     }
 
 }

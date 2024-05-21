@@ -55,8 +55,8 @@ public class World implements Screen {
         character = new Sprite(new Texture("assets/Full body animated characters/Char 4/no hands/idle_0.png"));
         spriteBatch = new SpriteBatch();
         renderer = map.makeMap();
-        player = new Player();
         intermessionScreen = new Intermession();
+        player = new Player(intermessionScreen);
         pauseScreen = new Pause(this);
 
 
