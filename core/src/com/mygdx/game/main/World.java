@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -16,7 +17,6 @@ import com.mygdx.game.TitleFight;
 import com.mygdx.game.enemies.EnemyHandler;
 import com.mygdx.game.player.Player;
 import com.mygdx.game.Screens.Intermession;
-import sun.security.util.FilePaths;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -30,11 +30,14 @@ public class World implements Screen {
     private Sprite character;
     private SpriteBatch spriteBatch;
     private Player player;
-
+    private Texture hpbarTexture;
+    private Sprite hpbarSprite;
+    private float hpbarWidth;
+    private final float hpbarHeight;
     private final float CAMERA_SPEED = 150.0f;
     private final float VIRTUAL_WIDTH = 1440;  // Virtual width
     private final float VIRTUAL_HEIGHT = 900;  // Virtual height
-
+    public BitmapFont font;
     //ENEMIES
     private EnemyHandler enemyHandler;
 
@@ -51,14 +54,18 @@ public class World implements Screen {
 
     public World(TitleFight titleFight){
         this.titleFight = titleFight;
+        font = new BitmapFont();
         map = new Map();
         character = new Sprite(new Texture("assets/Full body animated characters/Char 4/no hands/idle_0.png"));
         spriteBatch = new SpriteBatch();
         renderer = map.makeMap();
+        hpbarTexture = new Texture("assets/Extras/hpbar2.png");
+        hpbarSprite = new Sprite(hpbarTexture);
+        hpbarWidth = hpbarSprite.getWidth();
+        hpbarHeight = hpbarSprite.getHeight();
         intermessionScreen = new Intermession();
         player = new Player(intermessionScreen);
         pauseScreen = new Pause(this);
-
 
         //ENEMIES
         enemyHandler = new EnemyHandler(player.getWeapon());
@@ -184,7 +191,34 @@ public class World implements Screen {
         enemyHandler.handleWave(camera);
 
         renderer.render(new int[] {2});
+
+        spriteBatch.begin();
+        // PRA HP HEALTH PANGUTANA LNG NKO PRA UPDATE2 NIYA KY LIBOG JD KUN E REDRAW NA SIYA NGA MAGBASE SA PLAYER HP
+        if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
+            hpbarWidth -= 100;
+            player.decreaseHealth(10);
+            System.out.println("player health percentage: " + player.getHealthPercentage());
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+            hpbarWidth += 100;
+            player.increaseHealth(10);
+            System.out.println("player health percentage: " + player.getHealthPercentage());
+            if (hpbarWidth < 0) {
+                hpbarWidth = 0;
+            }
+        }
+
+        // Draw the HP bar at the top left corner
+        hpbarSprite.setSize(hpbarWidth, hpbarHeight);
+        hpbarSprite.setPosition(10, Gdx.graphics.getHeight() - hpbarHeight - 10); // Top left corner
+        hpbarSprite.draw(spriteBatch);
+
+        // Draw current health and total health text
+        String healthText = player.getCurrentHealth() + "/" + player.getMaxHealth();
+        font.draw(spriteBatch, healthText, 20, Gdx.graphics.getHeight() - hpbarHeight - 30);
+        spriteBatch.end();
     }
+
 
     public void zoom(){
         if(Gdx.input.isKeyPressed(Input.Keys.P)){
@@ -224,5 +258,8 @@ public class World implements Screen {
 
     public void dispose(){
         renderer.dispose();
+        hpbarTexture.dispose();
+        spriteBatch.dispose();
+        font.dispose();
     }
 }
