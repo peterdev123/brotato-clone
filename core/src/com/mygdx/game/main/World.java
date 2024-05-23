@@ -17,6 +17,7 @@ import com.mygdx.game.TitleFight;
 import com.mygdx.game.enemies.EnemyHandler;
 import com.mygdx.game.player.Player;
 import com.mygdx.game.Screens.Intermession;
+import com.mygdx.game.utilities.WaveHandler;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -55,8 +56,9 @@ public class World implements Screen {
     private Clip bgclip0;
 
     // Wave timer
-    private int currentWave = 1;
-    private float waveTimer = 5; // Duration of each wave in seconds
+    private WaveHandler waveTimerThread;
+//    private int currentWave = 1;
+//    private float waveTimer = 30; // Duration of each wave in seconds
     private BitmapFont font;
 
     public World(TitleFight titleFight) {
@@ -73,7 +75,8 @@ public class World implements Screen {
         player = new Player(intermissionScreen);
         pauseScreen = new Pause(this);
 
-
+        waveTimerThread = new WaveHandler();
+        waveTimerThread.start();
 
         // ENEMIES
         enemyHandler = new EnemyHandler(player.getWeapon());
@@ -152,6 +155,7 @@ public class World implements Screen {
         // Pauses the Screen
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             gamePaused = true;
+            waveTimerThread.pauseTimer();
             stopBackgroundMusic0();
         }
 
@@ -163,13 +167,30 @@ public class World implements Screen {
             }
         }
 
+        if (!gamePaused) {
+            waveTimerThread.resumeTimer();
+        }
+
+        //Class
         // Handle the wave timer
-        waveTimer -= delta;
-        if (waveTimer <= 0) {
-            currentWave++;
-            intermissionScreen.setStatPoints(3);
+//        waveTimer -= delta;
+//        if (waveTimer <= 0) {
+//            currentWave++;
+//            //Increment Stat Points for intermession
+//            intermissionScreen.setStatPoints(2);
+//            showIntermissionScreen();
+//            waveTimer = 30; // Reset the timer for the next wave
+//        }
+
+        int currentWave = waveTimerThread.getCurrentWave();
+        int waveTimer = waveTimerThread.getWaveTimer();
+
+        if (waveTimer == 0) {
+            intermissionScreen.setStatPoints(2);
             showIntermissionScreen();
-            waveTimer = 30; // Reset the timer for the next wave
+            waveTimerThread.setWaveTimer(30);
+            waveTimerThread.setWave(1);
+            enemyHandler.setHealthEnemies(waveTimerThread.getCurrentWave());
         }
 
         zoom(); // Call zoom to adjust zoom level if keys are pressed
@@ -188,11 +209,15 @@ public class World implements Screen {
         renderer.render(new int[]{2});
 
 
-        renderData();
+        renderData(currentWave, waveTimer);
 
 
         camera.update();
     }
+
+//    public int getCurrentWave() {
+//        return currentWave;
+//    }
 
     public void clampCamera() {
         float playerCenterX = player.character.getX();
@@ -210,7 +235,7 @@ public class World implements Screen {
         camera.position.y = MathUtils.clamp(playerCenterY, minY, maxY);
     }
 
-    public void renderData() {
+    public void renderData(int currentWave, float waveTimer) {
         // gi comment out ky mu max si player ambot ngnu
 //        renderer.setView(camera);
 //        renderer.render(new int[]{0, 1});
@@ -270,11 +295,13 @@ public class World implements Screen {
     public void showIntermissionScreen() {
         stopBackgroundMusic0();
         intermissionScreenShown = true;
+        waveTimerThread.pauseTimer();
         intermissionScreen.show();
     }
 
     public void hideIntermissionScreen() {
         intermissionScreenShown = false;
+        waveTimerThread.resumeTimer();
     }
 
     @Override
