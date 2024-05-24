@@ -79,7 +79,7 @@ public class World implements Screen {
         waveTimerThread.start();
 
         // ENEMIES
-        enemyHandler = new EnemyHandler(player.getWeapon());
+        enemyHandler = new EnemyHandler(player.getWeapon(), player);
         playBackgroundMusic0("assets/Audio/Game/BattleTheme.wav");
 
         // Initialize font
@@ -135,6 +135,7 @@ public class World implements Screen {
         // DEBUG: Render the intermission screen when true
         if (intermissionScreenShown) {
             intermissionScreen.render(delta);
+            waveTimerThread.pauseTimer();
             // Hides the intermission screen when "ESC" pressed
             if (Gdx.input.isKeyJustPressed(Input.Keys.K) || !intermissionScreen.getIntermessionShown()) {
                 hideIntermissionScreen();

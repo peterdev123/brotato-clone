@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Screens.Intermession;
 import com.mygdx.game.utilities.Animator;
@@ -19,7 +20,7 @@ import com.mygdx.game.weapons.Weapon;
 public class Player{
     //CONSTANTS
     private float PLAYER_WIDTH = 84, PLAYER_HEIGHT = 84, COLLISION_WIDTH = 5, COLLISION_HEIGHT = 5,
-                  LOS_WIDTH = 180, LOS_HEIGHT = 180;
+            LOS_WIDTH = 180, LOS_HEIGHT = 180;
     private float centerX = Gdx.graphics.getWidth() / 2f;
     private float centerY = Gdx.graphics.getHeight() / 2f;
 
@@ -33,8 +34,7 @@ public class Player{
     private float maxHealth;
     private float health;
     private int armor;
-    private int coins;
-    private float damage_multiplier;
+    public static float damage_multiplier;
 
     //Player Prerequisites
     public SpriteBatch spriteBatch;
@@ -95,7 +95,6 @@ public class Player{
         //PLAYER ATTRIBUTES
         maxHealth = 30;
         health = maxHealth;
-        coins = 0;
         damage_multiplier = 1.0f;
         armor = 0;
     }
@@ -141,7 +140,7 @@ public class Player{
         stateTime += Gdx.graphics.getDeltaTime() * 0.30f;
         TextureRegion currentFrame = null;
 
-          //debugging
+        //debugging
 //        shapeRendererLOS.setProjectionMatrix(camera.combined);
 //        shapeRendererLOS.begin(ShapeRenderer.ShapeType.Filled);
 //        shapeRendererLOS.setColor(Color.BLUE);
@@ -262,6 +261,10 @@ public class Player{
 
     public float getMaxHealth(){
         return maxHealth;
+    }
+
+    public Vector2 getLocation(){
+        return new Vector2(character.getX(), character.getY());
     }
 
 }

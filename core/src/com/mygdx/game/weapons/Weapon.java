@@ -41,7 +41,7 @@ public class Weapon{
 
     public Weapon(Player player){
         this.player_reference = player;
-        current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR1.png"));
+        current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR2.png"));
         projectiles = new Array<>();
         shapeRenderer = new ShapeRenderer();
 
