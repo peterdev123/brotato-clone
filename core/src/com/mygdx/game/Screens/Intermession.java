@@ -161,7 +161,7 @@ public class Intermession implements Screen {
     private void updateProgressBar() {
         Texture hpProg = progTextures[progressBar[0]];
         Texture dmgProg = progTextures[progressBar[1]];
-        Texture frrProg = progTextures[progressBar[2]];
+        Texture ddgProg = progTextures[progressBar[2]];
         Texture spdProg = progTextures[progressBar[3]];
         Texture armProg = progTextures[progressBar[4]];
 
@@ -170,7 +170,7 @@ public class Intermession implements Screen {
 
         batch.draw(hpProg, 320, 865, newWidth, newHeight);
         batch.draw(dmgProg, 320, 685, newWidth, newHeight);
-        batch.draw(frrProg, 320, 485, newWidth, newHeight);
+        batch.draw(ddgProg, 320, 485, newWidth, newHeight);
         batch.draw(spdProg, 320, 305, newWidth, newHeight);
         batch.draw(armProg, 320, 105, newWidth, newHeight);
     }
@@ -322,7 +322,7 @@ public class Intermession implements Screen {
         return progressBar[1];
     }
 
-    public int getFireRateData() {
+    public int getDodgeData() {
         return progressBar[2];
     }
 

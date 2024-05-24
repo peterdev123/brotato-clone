@@ -13,8 +13,8 @@ public class Zombie3 extends Enemies {
     private Rectangle hitbox;
 
     public Zombie3(int health, Texture enemy_texture, Vector2 position) {
-        super("Zombie 1", health, 5, 3, position, new Vector2(45, 45),
-                new Rectangle(position.x + 10, position.y + 10, new Vector2(45, 45).x - 20, new Vector2(45, 45).y - 20));  // Initializing with default values, can be modified
+        super("Zombie 3", health, 5, 2, 45, position, new Vector2(45, 45),
+                new Rectangle(position.x + 10, position.y + 10, new Vector2(45, 45).x - 20, new Vector2(45, 45).y - 20), 2);  // Initializing with default values, can be modified
         this.enemy_texture = enemy_texture;
 //        this.position = position;
 //        this.size = new Vector2(45, 45);
@@ -32,7 +32,7 @@ public class Zombie3 extends Enemies {
     public void takeDamage(int damage) {
         System.out.println("DAMAGE TAKEN: " + damage);
         System.out.println("Health Before: " + getHealth());
-        setHealth(getHealth() - damage);
+        setHealth(getHealth() - (damage - getDefense()));
         System.out.println("Health After: " + getHealth());
 
         // NUMBER GOES OUT DISPLAYING DAMAGE
