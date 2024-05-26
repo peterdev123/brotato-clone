@@ -103,6 +103,7 @@ public class Intermession implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 // Handle the button click event
                 System.out.println("Next Wave button clicked!");
+
                 intermessionShown = false;
             }
         });

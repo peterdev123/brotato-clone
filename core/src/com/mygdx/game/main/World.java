@@ -35,8 +35,9 @@ public class World implements Screen {
     private Texture hpbarTexture;
     private Sprite hpbarSprite;
     private float hpbarWidth;
+    private final float max_hpbarwidth;
     private final float hpbarHeight;
-
+    private float hpPercentage;
     private final float CAMERA_SPEED = 150.0f;
     private final float VIRTUAL_WIDTH = 1440;  // Virtual width
     private final float VIRTUAL_HEIGHT = 900;  // Virtual height
@@ -64,12 +65,14 @@ public class World implements Screen {
     public World(TitleFight titleFight) {
         this.titleFight = titleFight;
         map = new Map();
+
         character = new Sprite(new Texture("assets/Full body animated characters/Char 4/no hands/idle_0.png"));
         spriteBatch = new SpriteBatch();
         renderer = map.makeMap();
         hpbarTexture = new Texture("assets/Extras/hpbar2.png");
         hpbarSprite = new Sprite(hpbarTexture);
         hpbarWidth = hpbarSprite.getWidth();
+        max_hpbarwidth = hpbarSprite.getWidth();
         hpbarHeight = hpbarSprite.getHeight();
         intermissionScreen = new Intermession();
         player = new Player(intermissionScreen);
@@ -243,11 +246,14 @@ public class World implements Screen {
 //        player.handleMovement(camera);
         spriteBatch.begin();
         // PRA HP HEALTH PANGUTANA LNG NKO PRA UPDATE2 NIYA KY LIBOG JD KUN E REDRAW NA SIYA NGA MAGBASE SA PLAYER HP
-        if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
-            hpbarWidth -= 100;
-            player.decreaseHealth(10);
-            System.out.println("player health percentage: " + player.getHealthPercentage());
-        }
+
+
+        String timerText = "Wave " + currentWave + ": " + (int) waveTimer;
+        font.draw(spriteBatch, timerText, ((float) Gdx.graphics.getWidth() / 2) - 150, Gdx.graphics.getHeight() - 50);
+
+        // Draw the HP bar at the top left corner
+
+//        updateHp();
         if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
             hpbarWidth += 100;
             player.increaseHealth(10);
@@ -256,12 +262,18 @@ public class World implements Screen {
                 hpbarWidth = 0;
             }
         }
-
-        String timerText = "Wave " + currentWave + ": " + (int) waveTimer;
-        font.draw(spriteBatch, timerText, ((float) Gdx.graphics.getWidth() / 2) - 150, Gdx.graphics.getHeight() - 50);
-
-        // Draw the HP bar at the top left corner
-        hpbarSprite.setSize(hpbarWidth, hpbarHeight);
+        if (enemyHandler.handlePlayerCollisions()) {
+            hpbarWidth -= 100;
+            if (hpbarWidth < 0) {
+                hpbarWidth = 0; // Ensure HP bar width doesn't go below zero
+            }
+        }
+        hpbarWidth = max_hpbarwidth;
+        hpPercentage = player.getHealthPercentage();
+        float newHpBarWidth = hpbarWidth * hpPercentage;
+        System.out.println("HPBARWITDH !!!!!!!!! : " + hpbarWidth);
+        System.out.println("HP PERCENTAGE! :: " + hpPercentage);
+        hpbarSprite.setSize(newHpBarWidth, hpbarHeight);
         hpbarSprite.setPosition(10, Gdx.graphics.getHeight() - hpbarHeight - 10); // Top left corner
         hpbarSprite.draw(spriteBatch);
 
@@ -276,6 +288,7 @@ public class World implements Screen {
 //        renderer.render(new int[]{2});
     }
 
+
     public void zoom() {
         if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             camera.zoom += 0.05f;
@@ -284,6 +297,32 @@ public class World implements Screen {
             camera.zoom -= 0.05f;
         }
     }
+
+//    private void updateHp(){
+//
+//        spriteBatch.begin();
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+//            hpbarWidth += 100;
+//            player.increaseHealth(10);
+//            System.out.println("player health percentage: " + player.getHealthPercentage());
+//            if (hpbarWidth < 0) {
+//                hpbarWidth = 0;
+//            }
+//        }
+//        if (enemyHandler.handlePlayerCollisions()) {
+//            hpbarWidth -= 100;
+//            if (hpbarWidth < 0) {
+//                hpbarWidth = 0; // Ensure HP bar width doesn't go below zero
+//            }
+//        }
+//
+//        float healthPercentage = player.getHealthPercentage();
+//        float newHpBarWidth = hpbarWidth * healthPercentage;
+//        hpbarSprite.setSize(newHpBarWidth, hpbarHeight);
+//        hpbarSprite.setPosition(10, Gdx.graphics.getHeight() - hpbarHeight - 10); // Top left corner
+//        hpbarSprite.draw(spriteBatch);
+//        spriteBatch.end();
+//    }
 
     @Override
     public void resize(int width, int height) {
@@ -295,13 +334,22 @@ public class World implements Screen {
 
     public void showIntermissionScreen() {
         stopBackgroundMusic0();
+        player.resetHealth();
         intermissionScreenShown = true;
         waveTimerThread.pauseTimer();
         intermissionScreen.show();
+
     }
 
     public void hideIntermissionScreen() {
         intermissionScreenShown = false;
+        spriteBatch.begin();
+        float healthPercentage = player.getHealthPercentage();
+        float newHpBarWidth = hpbarWidth * healthPercentage;
+        hpbarSprite.setSize(newHpBarWidth, hpbarHeight);
+        hpbarSprite.setPosition(10, Gdx.graphics.getHeight() - hpbarHeight - 10); // Top left corner
+        hpbarSprite.draw(spriteBatch);
+        spriteBatch.end();
         waveTimerThread.resumeTimer();
     }
 

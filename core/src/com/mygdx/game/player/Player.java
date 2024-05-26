@@ -31,6 +31,8 @@ public class Player{
 
     private Weapon weaponHandler;
 
+
+
     //Player Attributes
     private float maxHealth;
     private float health;
@@ -132,7 +134,10 @@ public class Player{
 //        System.out.print(health + " " + damage_multiplier + " " + speed + " " + armor);
 //        System.out.println();
 //    }
+    public void resetHealth(){
+        this.health = maxHealth;
 
+    }
     //SET DAMAGE BASED ON STATS
     private void setDamage_multiplier() {
         damage_multiplier = 1 + (intermessionData.getDamageData() * 0.2f);
