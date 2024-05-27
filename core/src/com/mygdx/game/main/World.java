@@ -17,6 +17,7 @@ import com.mygdx.game.TitleFight;
 import com.mygdx.game.enemies.EnemyHandler;
 import com.mygdx.game.player.Player;
 import com.mygdx.game.Screens.Intermession;
+//import com.mygdx.game.utilities.HeadStart;
 import com.mygdx.game.utilities.WaveHandler;
 
 import javax.sound.sampled.*;
@@ -62,6 +63,9 @@ public class World implements Screen {
 //    private float waveTimer = 30; // Duration of each wave in seconds
     private BitmapFont font;
 
+    //Headstart
+    private boolean isHeadStartActive;
+
     public World(TitleFight titleFight) {
         this.titleFight = titleFight;
         map = new Map();
@@ -77,6 +81,7 @@ public class World implements Screen {
         intermissionScreen = new Intermession();
         player = new Player(intermissionScreen);
         pauseScreen = new Pause(this);
+        isHeadStartActive = false;
 
         waveTimerThread = new WaveHandler();
         waveTimerThread.start();
@@ -146,6 +151,8 @@ public class World implements Screen {
                 intermissionScreen.hide();
                 player.updatePlayerStats();
             }
+
+
             return; // Stop rendering the game world if the intermission screen is shown
         }
 
@@ -192,7 +199,8 @@ public class World implements Screen {
         if (waveTimer == 0) {
             intermissionScreen.setStatPoints(2);
             showIntermissionScreen();
-            waveTimerThread.setWaveTimer(5);
+            waveTimerThread.setHeadStart();
+            waveTimerThread.setWaveTimer(30);
             waveTimerThread.setWave(1);
             enemyHandler.setHealthEnemies(waveTimerThread.getCurrentWave());
         }
@@ -247,8 +255,14 @@ public class World implements Screen {
         spriteBatch.begin();
         // PRA HP HEALTH PANGUTANA LNG NKO PRA UPDATE2 NIYA KY LIBOG JD KUN E REDRAW NA SIYA NGA MAGBASE SA PLAYER HP
 
+        String timerText;
 
-        String timerText = "Wave " + currentWave + ": " + (int) waveTimer;
+        if (waveTimer == 30) {
+            timerText = "They are coming!";
+        }else {
+            timerText = "Wave " + currentWave + ": " + (int) waveTimer;
+        }
+
         font.draw(spriteBatch, timerText, ((float) Gdx.graphics.getWidth() / 2) - 150, Gdx.graphics.getHeight() - 50);
 
         // Draw the HP bar at the top left corner
@@ -278,7 +292,7 @@ public class World implements Screen {
         hpbarSprite.draw(spriteBatch);
 
         // Draw current health and total health text
-        String healthText = String.format("%.2f",player.getCurrentHealth()) + "/" + String.format("%.0f", player.getMaxHealth());
+        String healthText = String.format("%.2f",player.getCurrentHealth()) + "/" + String.format("%.0f", Math.ceil(player.getMaxHealth()));
         font.draw(spriteBatch, healthText, 20, Gdx.graphics.getHeight() - hpbarHeight - 30);
         spriteBatch.end();
         // ENEMIES: DEBUGGING

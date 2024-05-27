@@ -116,11 +116,14 @@ public class Player{
 
     //SET HP BASED ON STATS
     private void setHealth() {
-        health = health + (intermessionData.getHpData() * 2);
+        health = 30 + (intermessionData.getHpData() * 2);
         if (health > maxHealth) {
             maxHealth = health;
         }
 
+        if (health == 48) {
+            health = 50;
+        }
     }
 
 
@@ -155,6 +158,7 @@ public class Player{
     private void setDamage_multiplier() {
         damage_multiplier = 1 + (intermessionData.getDamageData() * 0.2f);
     }
+
     public void updatePlayerStats(){
         setSpeed();
         setHealth();
@@ -179,7 +183,9 @@ public class Player{
 //        shapeRendererCollision.rect(player_bounds.x, player_bounds.y, player_bounds.width, player_bounds.height);
 //        shapeRendererCollision.end();
 
-        collision.playerCollision(player_bounds, character);
+        collision.setPlayerBound(player_bounds);
+        collision.setCharacter(character);
+        collision.run();
 
         isMovingLeft = checkDirectionFacing(camera);
 

@@ -5,26 +5,40 @@ import com.mygdx.game.main.World;
 
 public class WaveHandler extends Thread {
     private int currentWave = 1;
-    private int waveTimer = 5; // Duration of each wave in seconds
+    private int waveTimer = 30; // Duration of each wave in seconds
     private boolean running = true;
     private boolean paused = false;
+    private boolean headStart = true;
 
     @Override
     public void run() {
         while (running) {
-            try {
-                Thread.sleep(1000); // Sleep for 1 second
-                if (!paused) {
-                    waveTimer -= 1;
-//                    if (waveTimer <= -1) {
-//                        currentWave++;
-//                        waveTimer = 5; // Reset the timer for the next wave
-//                    }
+            if(headStart) {
+                if(!paused) {
+                    try {
+                        Thread.sleep(3000); // Headstart for 3 seconds
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    headStart = false;
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            }
+            System.out.println(headStart);
+            if(!headStart) {
+                try {
+                    Thread.sleep(1000); // Sleep for 1 second
+                    if (!paused) {
+                        waveTimer -= 1;
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
+    }
+
+    public void setHeadStart() {
+        headStart = true;
     }
 
     public int getCurrentWave() {
@@ -52,7 +66,15 @@ public class WaveHandler extends Thread {
     }
 
     public void resumeTimer() {
-        paused = false;
+        paused = false;   }
+
+    public void startWave() {
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        start();
     }
 }
 

@@ -18,11 +18,13 @@ import com.mygdx.game.weapons.Projectile;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Collision {
+public class Collision implements Runnable {
     private MapObjects collision_objects;
     private MapObjects bullet_collision_objects;
 
     private Array<DamageIndicator> floatingDamages;
+    private Rectangle playerBound;
+    private Sprite character;
 
     public Collision(){
         collision_objects = new Map().getCollissionObjects();
@@ -30,32 +32,45 @@ public class Collision {
 
         floatingDamages = new Array<>();
     }
+    
+    @Override
+    public void run(){
+        playerCollision();
+    }
+    
+    public void setPlayerBound(Rectangle playerBound) {
+        this.playerBound = playerBound;
+    }
+    
+    public void setCharacter(Sprite character) {
+        this.character = character;
+    }
 
-    public void playerCollision(Rectangle player_bounds, Sprite character){
+    public void playerCollision(){
         for (MapObject object : collision_objects) {
             if (object instanceof RectangleMapObject) {
                 Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
                 // Check for collision
-                if (Intersector.overlaps(player_bounds, rectangle)) {
+                if (Intersector.overlaps(playerBound, rectangle)) {
                     // Determine the direction of collision (left, right, top, bottom)
-                    float overlapX = Math.max(0, Math.min(player_bounds.x + player_bounds.width, rectangle.x + rectangle.width) - Math.max(player_bounds.x, rectangle.x));
-                    float overlapY = Math.max(0, Math.min(player_bounds.y + player_bounds.height, rectangle.y + rectangle.height) - Math.max(player_bounds.y, rectangle.y));
+                    float overlapX = Math.max(0, Math.min(playerBound.x + playerBound.width, rectangle.x + rectangle.width) - Math.max(playerBound.x, rectangle.x));
+                    float overlapY = Math.max(0, Math.min(playerBound.y + playerBound.height, rectangle.y + rectangle.height) - Math.max(playerBound.y, rectangle.y));
 
                     // Adjust player's position based on the collision direction
                     if (overlapX < overlapY) {
                         // Horizontal collision
-                        if (player_bounds.x < rectangle.x) {
+                        if (playerBound.x < rectangle.x) {
                             // Collided from the left
-                            character.setX(rectangle.x - player_bounds.width);
+                            character.setX(rectangle.x - playerBound.width);
                         } else {
                             // Collided from the right
                             character.setX(rectangle.x + rectangle.width);
                         }
                     } else {
                         // Vertical collision
-                        if (player_bounds.y < rectangle.y) {
+                        if (playerBound.y < rectangle.y) {
                             // Collided from the bottom
-                            character.setY(rectangle.y - player_bounds.height);
+                            character.setY(rectangle.y - playerBound.height);
                         } else {
                             // Collided from the top
                             character.setY(rectangle.y + rectangle.height);
@@ -102,7 +117,8 @@ public class Collision {
                 floatingDamages.removeIndex(i);
                 i--; // Adjust the index after removal
             } else {
-                floatingDamage.render(batch);
+                floatingDamage.setBatch(batch);
+                floatingDamage.run();
             }
         }
     }
@@ -119,8 +135,6 @@ public class Collision {
                     System.out.println("Player collided with Enemy! Health: " + player.getCurrentHealth());
                     return true;  // Return true immediately after detecting a collision
                 }
-            }else {
-                System.out.println("I DODGED THAT SHIT");
             }
         }
         return false;
