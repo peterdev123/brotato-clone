@@ -192,7 +192,7 @@ public class World implements Screen {
         if (waveTimer == 0) {
             intermissionScreen.setStatPoints(2);
             showIntermissionScreen();
-            waveTimerThread.setWaveTimer(30);
+            waveTimerThread.setWaveTimer(5);
             waveTimerThread.setWave(1);
             enemyHandler.setHealthEnemies(waveTimerThread.getCurrentWave());
         }
@@ -278,7 +278,7 @@ public class World implements Screen {
         hpbarSprite.draw(spriteBatch);
 
         // Draw current health and total health text
-        String healthText = player.getCurrentHealth() + "/" + player.getMaxHealth();
+        String healthText = String.format("%.2f",player.getCurrentHealth()) + "/" + String.format("%.0f", player.getMaxHealth());
         font.draw(spriteBatch, healthText, 20, Gdx.graphics.getHeight() - hpbarHeight - 30);
         spriteBatch.end();
         // ENEMIES: DEBUGGING

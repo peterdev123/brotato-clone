@@ -286,9 +286,11 @@ public class Intermession implements Screen {
         } else if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
                 mouseY >= 90 && mouseY <= 90 + buttonHeight) {
             if (statPoints > 0) {
-                progressBar[4]++;
-                statPoints--;
-                return true;
+                if (progressBar[4] < 9) {
+                    progressBar[4]++;
+                    statPoints--;
+                    return true;
+                }
             }
         }
 

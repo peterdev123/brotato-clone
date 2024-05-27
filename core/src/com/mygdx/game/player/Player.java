@@ -37,6 +37,7 @@ public class Player{
     private float maxHealth;
     private float health;
     private int armor;
+    private int dodge;
     public static float damage_multiplier;
 
     //Player Prerequisites
@@ -126,9 +127,21 @@ public class Player{
 
     //SET ARMOR BASED ON STATS
     private void setArmor() {
+
         armor = intermessionData.getArmorData();
     }
 
+    public float getArmorPercentage() {
+        return (float) armor / 20;
+    }
+
+    private void setDodge() {
+        this.dodge = intermessionData.getDodgeData();
+    }
+
+    public int getDodge() {
+        return dodge * 5;
+    }
     //DEBUG
 //    private void showStats() {
 //        System.out.print(health + " " + damage_multiplier + " " + speed + " " + armor);
@@ -146,6 +159,7 @@ public class Player{
         setSpeed();
         setHealth();
         setArmor();
+        setDodge();
         setDamage_multiplier();
     }
     public void handleMovement(OrthographicCamera camera){

@@ -16,6 +16,7 @@ import com.mygdx.game.player.Player;
 import com.mygdx.game.weapons.Projectile;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Collision {
     private MapObjects collision_objects;
@@ -108,10 +109,18 @@ public class Collision {
 
     public boolean playerEnemyCollision(Player player, ArrayList<Enemies> enemies) {
         for (Enemies enemy : enemies) {
-            if (Intersector.overlaps(player.getPlayerHitbox(), enemy.getEnemyHitbox())) {
-                player.decreaseHealth(enemy.getAttackPower());
-                System.out.println("Player collided with Enemy! Health: " + player.getCurrentHealth());
-                return true;  // Return true immediately after detecting a collision
+            Random random = new Random();
+
+            int randomInt = random.nextInt(101);
+
+            if(randomInt < (100 - player.getDodge())) {
+                if (Intersector.overlaps(player.getPlayerHitbox(), enemy.getEnemyHitbox())) {
+                    player.decreaseHealth(enemy.getAttackPower() - (enemy.getAttackPower() * player.getArmorPercentage()));
+                    System.out.println("Player collided with Enemy! Health: " + player.getCurrentHealth());
+                    return true;  // Return true immediately after detecting a collision
+                }
+            }else {
+                System.out.println("I DODGED THAT SHIT");
             }
         }
         return false;

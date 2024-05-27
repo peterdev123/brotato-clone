@@ -5,7 +5,7 @@ import com.mygdx.game.main.World;
 
 public class WaveHandler extends Thread {
     private int currentWave = 1;
-    private int waveTimer = 30; // Duration of each wave in seconds
+    private int waveTimer = 5; // Duration of each wave in seconds
     private boolean running = true;
     private boolean paused = false;
 
