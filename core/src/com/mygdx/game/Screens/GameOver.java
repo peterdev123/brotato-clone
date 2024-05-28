@@ -31,15 +31,6 @@ public class GameOver implements Screen {
         batch = new SpriteBatch();
         background = new Texture("assets/Pages/GO_screen1.jpg");
         background2 = new Texture("assets/Pages/GO_screen2.jpg");
-
-        // Initialize and start the music thread
-        musicThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                    playGameOverMusic("assets/Audio/GameOver/GameOver.wav");
-            }
-        });
-        musicThread.start();
     }
 
     public void stopGameOverMusic(){
@@ -79,7 +70,13 @@ public class GameOver implements Screen {
 
     @Override
     public void show() {
-
+        musicThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                playGameOverMusic("assets/Audio/GameOver/GameOver.wav");
+            }
+        });
+        musicThread.start();
     }
 
     @Override

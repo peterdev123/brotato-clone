@@ -28,13 +28,7 @@ public class Pause implements Screen {
         batch = new SpriteBatch();
         background = new Texture("assets/Pages/P_Resume.jpg");
         background2 = new Texture("assets/Pages/P_Exit.jpg");
-        musicThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                playGameOverMusic("assets/Audio/GameOver/Realize(PauseMenu).wav");
-            }
-        });
-        musicThread.start();
+
     }
 
     public void stopGameOverMusic() {
@@ -77,6 +71,13 @@ public class Pause implements Screen {
 
     @Override
     public void show() {
+        musicThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                playGameOverMusic("assets/Audio/GameOver/Realize(PauseMenu).wav");
+            }
+        });
+        musicThread.start();
     }
 
     @Override

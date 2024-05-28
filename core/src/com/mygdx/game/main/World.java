@@ -198,6 +198,7 @@ public class World implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
             gameOverScreenShown = true;
             waveTimerThread.pauseTimer();
+            gameOver.show();
             stopBackgroundMusic0();
         }
 
@@ -205,6 +206,7 @@ public class World implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             gamePaused = true;
             waveTimerThread.pauseTimer();
+            pauseScreen.show();
             stopBackgroundMusic0();
         }
 
