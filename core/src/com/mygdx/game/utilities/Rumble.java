@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.util.Random;
 
-public class Rumble implements Runnable{
+public class Rumble extends Thread{
     private float time = 0;
     private float currentTime = 0;
     private float power = 0;

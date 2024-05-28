@@ -18,6 +18,9 @@ import com.mygdx.game.enemies.EnemyHandler;
 import com.mygdx.game.player.Player;
 import com.mygdx.game.Screens.Intermession;
 //import com.mygdx.game.utilities.HeadStart;
+import com.mygdx.game.utilities.ResetRunnable;
+import com.mygdx.game.utilities.SpawnRunnable;
+import com.mygdx.game.utilities.TallyScoreRunnable;
 import com.mygdx.game.utilities.WaveHandler;
 
 import javax.sound.sampled.*;
@@ -63,8 +66,12 @@ public class World implements Screen {
 //    private float waveTimer = 30; // Duration of each wave in seconds
     private BitmapFont font;
 
-    //Headstart
-    private boolean isHeadStartActive;
+    // Spawn and Reset Runnable
+    private Thread spawnThread;
+    private Thread resetThread;
+
+    // Tally Score Runnable
+    private Thread tallyThread;
 
     public World(TitleFight titleFight) {
         this.titleFight = titleFight;
@@ -81,10 +88,15 @@ public class World implements Screen {
         intermissionScreen = new Intermession();
         player = new Player(intermissionScreen);
         pauseScreen = new Pause(this);
-        isHeadStartActive = false;
 
+        // Start wave
         waveTimerThread = new WaveHandler();
         waveTimerThread.start();
+
+        // Runnable
+        spawnThread = new Thread(new SpawnRunnable());
+        resetThread = new Thread(new ResetRunnable());
+        tallyThread = new Thread(new TallyScoreRunnable());
 
         // ENEMIES
         enemyHandler = new EnemyHandler(player.getWeapon(), player);
@@ -199,7 +211,7 @@ public class World implements Screen {
         if (waveTimer == 0) {
             intermissionScreen.setStatPoints(2);
             showIntermissionScreen();
-            waveTimerThread.setHeadStart();
+//            waveTimerThread.setHeadStart();
             waveTimerThread.setWaveTimer(30);
             waveTimerThread.setWave(1);
             enemyHandler.setHealthEnemies(waveTimerThread.getCurrentWave());
@@ -216,7 +228,7 @@ public class World implements Screen {
         player.handleMovement(camera);
 
         // ENEMIES: DEBUGGING
-        enemyHandler.handleWave(camera);
+        enemyHandler.handleWave(camera, waveTimer);
 
         renderer.render(new int[]{2});
 
@@ -271,7 +283,7 @@ public class World implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
             hpbarWidth += 100;
             player.increaseHealth(10);
-            System.out.println("player health percentage: " + player.getHealthPercentage());
+//            System.out.println("player health percentage: " + player.getHealthPercentage());
             if (hpbarWidth < 0) {
                 hpbarWidth = 0;
             }

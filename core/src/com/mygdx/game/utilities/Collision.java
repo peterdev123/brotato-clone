@@ -18,7 +18,7 @@ import com.mygdx.game.weapons.Projectile;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Collision implements Runnable {
+public class Collision extends Thread {
     private MapObjects collision_objects;
     private MapObjects bullet_collision_objects;
 

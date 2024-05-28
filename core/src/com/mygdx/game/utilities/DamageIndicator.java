@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.player.Player;
 
-public class DamageIndicator implements Runnable {
+public class DamageIndicator extends Thread {
     private Vector2 position;
     private int damage;
     private long creationTime;
