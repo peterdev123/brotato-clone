@@ -135,7 +135,7 @@ public class Player{
     }
 
     public float getArmorPercentage() {
-        return (float) armor / 20;
+        return (float) armor / 25;
     }
 
     private void setDodge() {
@@ -143,7 +143,7 @@ public class Player{
     }
 
     public int getDodge() {
-        return dodge * 5;
+        return dodge * 4;
     }
     //DEBUG
 //    private void showStats() {

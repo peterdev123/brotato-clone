@@ -1,8 +1,5 @@
 package com.mygdx.game.utilities;
 
-import com.mygdx.game.Screens.Intermession;
-import com.mygdx.game.main.World;
-
 public class WaveHandler extends Thread {
     private int currentWave = 1;
     private int waveTimer = 30; // Duration of each wave in seconds
@@ -13,32 +10,43 @@ public class WaveHandler extends Thread {
     @Override
     public void run() {
         while (running) {
-            if(headStart) {
-                if(!paused) {
+            if (headStart) {
+                if (!paused) {
                     try {
-                        Thread.sleep(3000); // Headstart for 3 seconds
+                        Thread.sleep(5000); // Headstart for 3 seconds
+                        headStart = false; // Headstart done
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    headStart = false;
+                } else {
+                    // If paused, don't decrement waveTimer during headstart
+                    continue;
                 }
             }
-            System.out.println(headStart);
-            if(!headStart) {
-                try {
-                    Thread.sleep(1000); // Sleep for 1 second
-                    if (!paused) {
-                        waveTimer -= 1;
+
+            try {
+                synchronized (this) {
+                    while (paused) {
+                        wait(); // Wait until notified (paused becomes false)
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+
+                Thread.sleep(1000); // Sleep for 1 second
+                waveTimer -= 1;
+
+                // Check wave timer and handle wave logic here if needed
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // Reset wave timer and apply headstart before the next wave
+            if (waveTimer <= 0) {
+//                currentWave++;
+//                waveTimer = 30; // Reset wave timer
+                headStart = true; // Apply headstart before the next wave
             }
         }
-    }
-
-    public void setHeadStart() {
-        headStart = true;
     }
 
     public int getCurrentWave() {
@@ -51,6 +59,7 @@ public class WaveHandler extends Thread {
 
     public void stopTimer() {
         running = false;
+        resumeTimer(); // Ensure any waiting thread is resumed before stopping
     }
 
     public void setWaveTimer(int time) {
@@ -61,21 +70,18 @@ public class WaveHandler extends Thread {
         currentWave += wave;
     }
 
-    public void pauseTimer() {
+    public synchronized void pauseTimer() {
         paused = true;
     }
 
-    public void resumeTimer() {
-        paused = false;   }
-
-    public void startWave() {
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        start();
+    public synchronized void resumeTimer() {
+        paused = false;
+        notify(); // Notify any waiting thread
     }
+
+    @Override
+    public synchronized void start() {
+        super.start(); // Start the thread
+    }
+
 }
-
-
