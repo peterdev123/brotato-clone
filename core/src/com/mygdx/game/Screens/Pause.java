@@ -52,7 +52,7 @@ public class Pause implements Screen {
 
             // Adjust volume
             FloatControl gainControl = (FloatControl) bgclip0.getControl(FloatControl.Type.MASTER_GAIN);
-            float volume = (float) (Math.log(0.1) / Math.log(10.0) * 20.0); // -20 dB
+            float volume = (float) (Math.log(0.7) / Math.log(10.0) * 20.0); // -20 dB
             gainControl.setValue(volume);
 
             // Loop the clip continuously.

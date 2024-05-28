@@ -87,11 +87,16 @@ public class GameOver implements Screen {
         batch.begin();
         if (counter == 0) {
             batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            // FXML FILE CALL HERE
+            // LEADERBOARD HERE
+            if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+                stopGameOverMusic();
+                world.dispose();
+            }
         } else if (counter == 1) {
             batch.draw(background2, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
                 // RESET GAME
+                stopGameOverMusic();
                 world.resetAll();
             }
         }

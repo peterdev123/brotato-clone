@@ -51,6 +51,7 @@ public class DamageIndicator extends Thread {
             this.font.getData().setScale(0.7f);
             this.font.setColor(Color.RED);
         }
+        Player.totalScore += damage_dealt;
     }
 
     public void dispose() {

@@ -2,7 +2,6 @@ package com.mygdx.game.weapons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.main.World;
 import com.mygdx.game.player.Player;
 import com.mygdx.game.utilities.Collision;
 import com.mygdx.game.utilities.Rumble;
@@ -42,12 +42,12 @@ public class Weapon{
     //RUMBLE
     private Rumble rumble;
 
+
     public Weapon(Player player){
         this.player_reference = player;
         current_weapon = new Texture(Gdx.files.internal("assets/Weapons/weaponR1.png"));
         projectiles = new Array<>();
         shapeRenderer = new ShapeRenderer();
-
         collision = new Collision();
 
         damage = 10;

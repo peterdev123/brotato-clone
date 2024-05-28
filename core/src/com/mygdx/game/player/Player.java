@@ -68,7 +68,11 @@ public class Player{
     private ShapeRenderer shapeRendererCollision;
     private ShapeRenderer shapeRendererLOS;
 
+    // Stats
     private Intermession intermessionData;
+
+    //Score
+    public static int totalScore;
 
     public Player(Intermession intermessionData){
         this.intermessionData = intermessionData;
@@ -80,6 +84,7 @@ public class Player{
         speed = 55 * 2;
         isMoving = false;
         isMovingLeft = false;
+        totalScore = 0;
 
         collision = new Collision();
         player_bounds = new Rectangle(playerDrawX, playerDrawY, COLLISION_WIDTH, COLLISION_HEIGHT);

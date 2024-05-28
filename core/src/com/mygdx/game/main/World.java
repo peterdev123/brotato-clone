@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Screens.GameOver;
 import com.mygdx.game.Screens.Pause;
 import com.mygdx.game.TitleFight;
@@ -20,8 +19,6 @@ import com.mygdx.game.player.Player;
 import com.mygdx.game.Screens.Intermession;
 //import com.mygdx.game.utilities.HeadStart;
 import com.mygdx.game.utilities.ResetRunnable;
-import com.mygdx.game.utilities.SpawnRunnable;
-import com.mygdx.game.utilities.TallyScoreRunnable;
 import com.mygdx.game.utilities.WaveHandler;
 
 import javax.sound.sampled.*;
@@ -71,12 +68,6 @@ public class World implements Screen {
 //    private float waveTimer = 30; // Duration of each wave in seconds
     private BitmapFont font;
 
-    // Spawn and Reset Runnable
-    private Thread spawnThread;
-    private Thread resetThread;
-
-    // Tally Score Runnable
-    private Thread tallyThread;
 
     public World(TitleFight titleFight) {
         this.titleFight = titleFight;
@@ -99,10 +90,6 @@ public class World implements Screen {
         waveTimerThread = new WaveHandler();
         waveTimerThread.start();
 
-        // Runnable
-        spawnThread = new Thread(new SpawnRunnable());
-        resetThread = new Thread(new ResetRunnable());
-        tallyThread = new Thread(new TallyScoreRunnable());
 
         // ENEMIES
         enemyHandler = new EnemyHandler(player.getWeapon(), player);
@@ -160,6 +147,7 @@ public class World implements Screen {
         Gdx.gl.glClearColor(24 / 255f, 20 / 255f, 37 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        System.out.println(Player.totalScore);
         // DEBUG: Render the intermission screen when true
         if (intermissionScreenShown) {
             intermissionScreen.render(delta);
@@ -190,8 +178,6 @@ public class World implements Screen {
             gameOver.render(delta);
             gameOver.setGameOver(gameOverScreenShown);
             return;
-        }else{
-            gameOver.stopGameOverMusic();
         }
 
         // GAMEOVER DEBUG
@@ -222,6 +208,14 @@ public class World implements Screen {
             waveTimerThread.resumeTimer();
         }
 
+        // GAME OVER
+        if (player.getHealthPercentage() == 0) {
+            gameOverScreenShown = true;
+            waveTimerThread.pauseTimer();
+            gameOver.show();
+            stopBackgroundMusic0();
+        }
+
         //Class
         // Handle the wave timer
 //        waveTimer -= delta;
@@ -236,14 +230,16 @@ public class World implements Screen {
         int currentWave = waveTimerThread.getCurrentWave();
         int waveTimer = waveTimerThread.getWaveTimer();
 
-        if (waveTimer == 0) {
-            intermissionScreen.setStatPoints(2);
-            showIntermissionScreen();
-//            waveTimerThread.setHeadStart();
-            waveTimerThread.setWaveTimer(30);
-            waveTimerThread.setWave(1);
-            enemyHandler.setHealthEnemies(waveTimerThread.getCurrentWave());
-        }
+        checkWave(waveTimer);
+
+//        if (waveTimer == 0) {
+//            intermissionScreen.setStatPoints(2);
+//            showIntermissionScreen();
+////            waveTimerThread.setHeadStart();
+//            waveTimerThread.setWaveTimer(30);
+//            waveTimerThread.setWave(1);
+//            enemyHandler.setHealthEnemies(waveTimerThread.getCurrentWave());
+//        }
 
         zoom(); // Call zoom to adjust zoom level if keys are pressed
 
@@ -303,7 +299,7 @@ public class World implements Screen {
             timerText = "Wave " + currentWave + ": " + (int) waveTimer;
         }
 
-        font.draw(spriteBatch, timerText, ((float) Gdx.graphics.getWidth() / 2) - 150, Gdx.graphics.getHeight() - 50);
+        font.draw(spriteBatch, timerText, ((float) Gdx.graphics.getWidth() / 2) - 180, Gdx.graphics.getHeight() - 50);
 
         // Draw the HP bar at the top left corner
 
@@ -325,8 +321,6 @@ public class World implements Screen {
         hpbarWidth = max_hpbarwidth;
         hpPercentage = player.getHealthPercentage();
         float newHpBarWidth = hpbarWidth * hpPercentage;
-        System.out.println("HPBARWITDH !!!!!!!!! : " + hpbarWidth);
-        System.out.println("HP PERCENTAGE! :: " + hpPercentage);
         hpbarSprite.setSize(newHpBarWidth, hpbarHeight);
         hpbarSprite.setPosition(10, Gdx.graphics.getHeight() - hpbarHeight - 10); // Top left corner
         hpbarSprite.draw(spriteBatch);
@@ -342,6 +336,15 @@ public class World implements Screen {
 //        renderer.render(new int[]{2});
     }
 
+    public void checkWave(int waveTimer) {
+        if (waveTimer == 0) {
+            intermissionScreen.setStatPoints(2);
+            showIntermissionScreen();
+            ResetRunnable resetRunnable = new ResetRunnable(waveTimerThread, enemyHandler);
+            Thread resetThread = new Thread(resetRunnable);
+            resetThread.start();
+        }
+    }
 
     public void zoom() {
         if (Gdx.input.isKeyPressed(Input.Keys.P)) {
