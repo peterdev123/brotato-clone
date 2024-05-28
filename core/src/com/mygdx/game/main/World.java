@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Screens.GameOver;
 import com.mygdx.game.Screens.Pause;
 import com.mygdx.game.TitleFight;
 import com.mygdx.game.enemies.EnemyHandler;
@@ -53,6 +54,10 @@ public class World implements Screen {
     private boolean intermissionScreenShown = false;
     private Intermession intermissionScreen;
 
+
+    // GAMEOVER
+    private boolean gameOverScreenShown = false;
+    private GameOver gameOver;
     // Pause
     public boolean gamePaused = false;
     private Pause pauseScreen;
@@ -88,6 +93,7 @@ public class World implements Screen {
         intermissionScreen = new Intermession();
         player = new Player(intermissionScreen);
         pauseScreen = new Pause(this);
+        gameOver = new GameOver(this);
 
         // Start wave
         waveTimerThread = new WaveHandler();
@@ -140,6 +146,8 @@ public class World implements Screen {
         }
     }
 
+
+
     private void stopBackgroundMusic0() {
         if (bgclip0 != null && bgclip0.isRunning()) {
             bgclip0.stop();
@@ -173,6 +181,24 @@ public class World implements Screen {
             pauseScreen.render(delta);
             pauseScreen.setGamePaused(gamePaused);
             return;
+        }else{
+            pauseScreen.stopGameOverMusic();
+        }
+
+        // GAME OVER SCREEN
+        if(gameOverScreenShown){
+            gameOver.render(delta);
+            gameOver.setGameOver(gameOverScreenShown);
+            return;
+        }else{
+            gameOver.stopGameOverMusic();
+        }
+
+        // GAMEOVER DEBUG
+        if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
+            gameOverScreenShown = true;
+            waveTimerThread.pauseTimer();
+            stopBackgroundMusic0();
         }
 
         // Pauses the Screen
@@ -364,6 +390,12 @@ public class World implements Screen {
         intermissionScreenShown = true;
         waveTimerThread.pauseTimer();
         intermissionScreen.show();
+
+    }
+
+    public void resetAll(){
+        intermissionScreen.resetAllStatsBackToNormal();
+        titleFight.create();
 
     }
 

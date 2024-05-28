@@ -246,6 +246,12 @@ public class Intermession implements Screen {
         }
     }
 
+    public void resetAllStatsBackToNormal(){
+        for(int i = 0 ; i < 5 ; i++){
+            progressBar[i] = 0;
+        }
+    }
+
     // Check if the mouse coordinates are over the button
     private boolean isMouseOverButton(float mouseX, float mouseY) {
         // Define the boundaries of the button (adjust according to your button's position and size)
