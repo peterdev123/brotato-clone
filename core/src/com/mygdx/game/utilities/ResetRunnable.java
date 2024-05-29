@@ -18,7 +18,7 @@ public class  ResetRunnable implements Runnable {
     public void run() {
         intermession.setStatPoints(3);
         waveTimerThread.setWaveTimer(30);
-        waveTimerThread.setWave(1);
+        waveTimerThread.setWave();
         enemyHandler.setHealthEnemies(waveTimerThread.getCurrentWave());
     }
 }
