@@ -132,7 +132,6 @@ public class Collision extends Thread {
             if(randomInt < (100 - player.getDodge())) {
                 if (Intersector.overlaps(player.getPlayerHitbox(), enemy.getEnemyHitbox())) {
                     player.decreaseHealth(enemy.getAttackPower() - (enemy.getAttackPower() * player.getArmorPercentage()));
-                    System.out.println("Player collided with Enemy! Health: " + player.getCurrentHealth());
                     return true;  // Return true immediately after detecting a collision
                 }
             }

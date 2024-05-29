@@ -225,8 +225,6 @@ public class EnemyHandler {
     public boolean handlePlayerCollisions() {
         for (Enemies enemy : enemies) {
             if (enemyCollision.playerEnemyCollision(player, enemies)) {
-                enemy.attack();
-                System.out.println("Player Health: " + player.getCurrentHealth());
                 return true;
             }
         }

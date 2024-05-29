@@ -102,7 +102,6 @@ public class Intermession implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Handle the button click event
-                System.out.println("Next Wave button clicked!");
 
                 intermessionShown = false;
             }
@@ -137,7 +136,6 @@ public class Intermession implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     // Handle the button click event
-                    System.out.println("Plus Button " + buttonIndex + " clicked!");
                     if (progressBar[buttonIndex] < 9) {
                         progressBar[buttonIndex]++;
                     }
@@ -241,7 +239,6 @@ public class Intermession implements Screen {
             // Check if the mouse coordinates are within the bounds of the button
             if (isMouseOverButton(mouseX, mouseY)) {
                 // Handle button click event here
-                System.out.println("Button clicked!");
             }
         }
     }
@@ -308,7 +305,6 @@ public class Intermession implements Screen {
         // next wave button
         if (mouseX >= 1420 && mouseX <= 1670 &&
             mouseY >= btnHeight && mouseY <= btnHeight + 110) {
-            System.out.println( progressBar[0] + progressBar[1] + progressBar[2] + progressBar[3] + progressBar[4] );
             player.updatePlayerStats();
             this.setIntermessionShown(false);
         }

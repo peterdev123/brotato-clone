@@ -30,10 +30,7 @@ public class Zombie1 extends Enemies {
 
     @Override
     public void takeDamage(int damage) {
-        System.out.println("DAMAGE TAKEN: " + damage);
-        System.out.println("Health Before: " + getHealth());
         setHealth(getHealth() - (damage - getDefense()));
-        System.out.println("Health After: " + getHealth());
 
         // NUMBER GOES OUT DISPLAYING DAMAGE
 
