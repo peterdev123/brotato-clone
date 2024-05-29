@@ -422,6 +422,7 @@ public class World implements Screen {
         enemyHandler.clearEnemies();
         waveTimerThread.setWaveTimer(30);
         waveTimerThread.setWave(1);
+        Player.totalScore = 0;
         gameOverScreenShown = false;
     }
 
