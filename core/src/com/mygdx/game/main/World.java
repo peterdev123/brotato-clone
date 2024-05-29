@@ -155,6 +155,7 @@ public class World implements Screen {
 
     @Override
     public void render(float delta) {
+        System.out.println(Player.totalScore);
         Gdx.gl.glClearColor(24 / 255f, 20 / 255f, 37 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 

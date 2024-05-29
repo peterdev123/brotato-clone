@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.MySql.InsertData;
 import com.mygdx.game.main.World;
 import com.mygdx.game.player.Player;
 
@@ -19,6 +20,7 @@ public class Leaderboard implements Screen {
     private BitmapFont font, scoreFont;
     private StringBuilder inputTextBuilder = new StringBuilder();
     private static final int MAX_CHARACTERS = 10;
+    private InsertData insertData;
 
     public Leaderboard(World world) {
         this.world = world;
@@ -31,6 +33,7 @@ public class Leaderboard implements Screen {
         scoreFont.setColor(Color.RED);
         font.getData().setScale(4);
         scoreFont.getData().setScale(4);
+        insertData = new InsertData();
     }
 
     @Override
@@ -79,6 +82,14 @@ public class Leaderboard implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE) && inputTextBuilder.length() > 0) {
             inputTextBuilder.deleteCharAt(inputTextBuilder.length() - 1);
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && inputTextBuilder.length() > 0) {
+            // Assuming rank can be calculated or is predefined
+            String rank = "1"; // Replace this with actual logic for rank if needed
+            insertData.setData(inputTextBuilder.toString(), String.valueOf(Player.totalScore), rank);
+            world.dispose();
+            System.exit(0);
         }
     }
 
