@@ -18,6 +18,7 @@ public class Leaderboard implements Screen {
     private Texture background;
     private BitmapFont font, scoreFont;
     private StringBuilder inputTextBuilder = new StringBuilder();
+    private static final int MAX_CHARACTERS = 10;
 
     public Leaderboard(World world) {
         this.world = world;
@@ -45,7 +46,7 @@ public class Leaderboard implements Screen {
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        // Append letters based on keyboard input
+        // Append letters and numbers based on keyboard input
         handleInput();
 
         // Draw the input text
@@ -56,15 +57,24 @@ public class Leaderboard implements Screen {
     }
 
     private void handleInput() {
-        for (int key = Input.Keys.A; key <= Input.Keys.Z; key++) {
-            if (Gdx.input.isKeyJustPressed(key)) {
-                char letter = (char) (key - Input.Keys.A + 'A');
-                inputTextBuilder.append(letter);
+        if (inputTextBuilder.length() < MAX_CHARACTERS) {
+            for (int key = Input.Keys.A; key <= Input.Keys.Z; key++) {
+                if (Gdx.input.isKeyJustPressed(key)) {
+                    char letter = (char) (key - Input.Keys.A + 'A');
+                    inputTextBuilder.append(letter);
+                }
             }
-        }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            inputTextBuilder.append(" ");
+            for (int key = Input.Keys.NUM_0; key <= Input.Keys.NUM_9; key++) {
+                if (Gdx.input.isKeyJustPressed(key)) {
+                    char number = (char) (key - Input.Keys.NUM_0 + '0');
+                    inputTextBuilder.append(number);
+                }
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                inputTextBuilder.append(" ");
+            }
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE) && inputTextBuilder.length() > 0) {
@@ -97,5 +107,6 @@ public class Leaderboard implements Screen {
         batch.dispose();
         background.dispose();
         font.dispose();
+        scoreFont.dispose();
     }
 }

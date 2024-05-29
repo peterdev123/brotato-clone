@@ -4,6 +4,7 @@ package Menu;
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
+import MySql.CreateTable;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.mygdx.game.TitleFight;
@@ -27,7 +28,7 @@ public class Menu extends JFrame {
     public Menu() {
         initComponents();
         setLocationRelativeTo(null);
-
+        CreateTable.createTable();
         setTitle("Exiled");
 
         // Set the JFrame icon
