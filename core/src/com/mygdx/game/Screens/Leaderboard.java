@@ -9,8 +9,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.MySql.InsertData;
+import com.mygdx.game.MySql.Rankings;
+import com.mygdx.game.MySql.ReadData;
+import com.mygdx.game.MySql.UpdateData;
 import com.mygdx.game.main.World;
 import com.mygdx.game.player.Player;
+
+import java.sql.SQLException;
+import java.util.List;
 
 public class Leaderboard implements Screen {
 
@@ -21,19 +27,22 @@ public class Leaderboard implements Screen {
     private StringBuilder inputTextBuilder = new StringBuilder();
     private static final int MAX_CHARACTERS = 10;
     private InsertData insertData;
+    private UpdateData updateData;
+    private ReadData readData;
 
     public Leaderboard(World world) {
         this.world = world;
         batch = new SpriteBatch();
         background = new Texture("assets/Pages/LeaderboardScreen.jpg");
 
-        // Create a default BitmapFont
         font = new BitmapFont();
         scoreFont = new BitmapFont();
         scoreFont.setColor(Color.RED);
         font.getData().setScale(4);
         scoreFont.getData().setScale(4);
         insertData = new InsertData();
+        updateData = new UpdateData();
+        readData = new ReadData();
     }
 
     @Override
@@ -49,12 +58,10 @@ public class Leaderboard implements Screen {
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        // Append letters and numbers based on keyboard input
         handleInput();
 
-        // Draw the input text
-        scoreFont.draw(batch, Integer.toString(Player.totalScore), ((float) Gdx.graphics.getWidth() / 2) - 50, ((float) Gdx.graphics.getHeight() / 2) + 170);
-        font.draw(batch, inputTextBuilder.toString(), ((float) Gdx.graphics.getWidth() / 2) - 50, ((float) Gdx.graphics.getHeight() / 2) + 30);
+        scoreFont.draw(batch, Integer.toString(Player.totalScore), (Gdx.graphics.getWidth() / 2f) - 50, (Gdx.graphics.getHeight() / 2f) + 170);
+        font.draw(batch, inputTextBuilder.toString(), (Gdx.graphics.getWidth() / 2f) - 50, (Gdx.graphics.getHeight() / 2f) + 30);
 
         batch.end();
     }
@@ -85,9 +92,16 @@ public class Leaderboard implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && inputTextBuilder.length() > 0) {
-            // Assuming rank can be calculated or is predefined
-            String rank = "1"; // Replace this with actual logic for rank if needed
-            insertData.setData(inputTextBuilder.toString(), String.valueOf(Player.totalScore), rank);
+            String username = inputTextBuilder.toString();
+            int score = Player.totalScore;
+
+            insertData.setData(username, String.valueOf(score));
+            try {
+                List<Rankings> rankings = readData.readData();
+                updateData.updateRanking(rankings);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             world.dispose();
             System.exit(0);
         }

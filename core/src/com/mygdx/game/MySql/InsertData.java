@@ -2,43 +2,61 @@ package com.mygdx.game.MySql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class InsertData {
-    public static void main(String[] args) {
-        try(Connection c = MySqlConnection.getConnection();
-            PreparedStatement statement = c.prepareStatement(
-                    "INSERT into dbexile (username, score,rank) VALUES (?,?,?)")){
-            String username = "Kyle T. Vasquez";
-            String score = "1234567890";
-            String rank = "1";
-            statement.setString(1,username);
-            statement.setString(2, score);
-            statement.setString(3, rank);
-            int rows = statement.executeUpdate();
 
-            if(rows > 0){
-                System.out.println("Rows inserted: " + rows);
+    public void setData(String username, String score) {
+        try (Connection c = MySqlConnection.getConnection();
+             PreparedStatement insertStatement = c.prepareStatement(
+                     "INSERT INTO dbexile (username, score, rank) VALUES (?, ?, ?)")) {
+
+            int scoreValue = Integer.parseInt(score);
+            if (!isScoreHighEnough(scoreValue)) {
+                System.out.println("Score not high enough for top 10.");
+                return;
             }
-        }catch (SQLException e){
+
+            insertStatement.setString(1, username);
+            insertStatement.setInt(2, scoreValue);
+            insertStatement.setInt(3, 0); // Temporary rank, will be updated later
+            insertStatement.executeUpdate();
+
+            updateRankings();
+
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void setData(String username, String score, String rank) {
-        try(Connection c = MySqlConnection.getConnection();
-            PreparedStatement statement = c.prepareStatement(
-                    "INSERT into dbexile (username, score,rank) VALUES (?,?,?)")){
-            statement.setString(1,username);
-            statement.setString(2, score);
-            statement.setString(3, rank);
-            int rows = statement.executeUpdate();
-
-            if(rows > 0){
-                System.out.println("Rows inserted: " + rows);
+    private boolean isScoreHighEnough(int score) throws SQLException {
+        try (Connection c = MySqlConnection.getConnection();
+             PreparedStatement statement = c.prepareStatement(
+                     "SELECT score FROM dbexile ORDER BY score DESC LIMIT 10");
+             ResultSet resultSet = statement.executeQuery()) {
+            int count = 0;
+            while (resultSet.next()) {
+                count++;
+                if (resultSet.getInt("score") <= score) {
+                    return true;
+                }
             }
-        }catch (SQLException e){
-            throw new RuntimeException(e);
+            return count < 10;
+        }
+    }
+
+    private void updateRankings() throws SQLException {
+        UpdateData updateData = new UpdateData();
+        ReadData readData = new ReadData();
+        List<Rankings> rankings = readData.readData();
+        updateData.updateRanking(rankings);
+
+        if (rankings.size() > 10) {
+            Rankings lowestRanking = rankings.get(10);
+            DeleteData deleteData = new DeleteData();
+            deleteData.deleteLowestRanking(lowestRanking);
         }
     }
 }
