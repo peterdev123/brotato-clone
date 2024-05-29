@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.Screens.GameOver;
+import com.mygdx.game.Screens.Leaderboard;
 import com.mygdx.game.Screens.Pause;
 import com.mygdx.game.TitleFight;
 import com.mygdx.game.enemies.EnemyHandler;
@@ -66,8 +67,15 @@ public class World implements Screen {
     private WaveHandler waveTimerThread;
 //    private int currentWave = 1;
 //    private float waveTimer = 30; // Duration of each wave in seconds
+
+    //Text
     private BitmapFont font;
 
+    //Boolean for game done
+    private boolean gameDone;
+
+    //For leaderboard
+    private Leaderboard leaderboard;
 
     public World(TitleFight titleFight) {
         this.titleFight = titleFight;
@@ -89,6 +97,9 @@ public class World implements Screen {
         // Start wave
         waveTimerThread = new WaveHandler();
         waveTimerThread.start();
+
+        this.gameDone = false;
+        leaderboard = new Leaderboard(this);
 
 
         // ENEMIES
@@ -147,7 +158,10 @@ public class World implements Screen {
         Gdx.gl.glClearColor(24 / 255f, 20 / 255f, 37 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        System.out.println(Player.totalScore);
+        if (gameDone) {
+            leaderboard.render(delta);
+            return;
+        }
         // DEBUG: Render the intermission screen when true
         if (intermissionScreenShown) {
             intermissionScreen.render(delta);
@@ -338,12 +352,15 @@ public class World implements Screen {
 
     public void checkWave(int waveTimer) {
         if (waveTimer == 0) {
-            intermissionScreen.setStatPoints(2);
             showIntermissionScreen();
-            ResetRunnable resetRunnable = new ResetRunnable(waveTimerThread, enemyHandler);
+            ResetRunnable resetRunnable = new ResetRunnable(waveTimerThread, enemyHandler, intermissionScreen);
             Thread resetThread = new Thread(resetRunnable);
             resetThread.start();
         }
+    }
+
+    public void setGameDone() {
+        gameDone = true;
     }
 
     public void zoom() {
@@ -433,10 +450,49 @@ public class World implements Screen {
 
     @Override
     public void dispose() {
-        renderer.dispose();
-        font.dispose();
-        spriteBatch.dispose(); // Don't forget to dispose the spriteBatch
+        // Dispose renderer
+        if (renderer != null) {
+            renderer.dispose();
+        }
+
+        // Dispose font
+        if (font != null) {
+            font.dispose();
+        }
+
+        // Dispose sprite batch
+        if (spriteBatch != null) {
+            spriteBatch.dispose();
+        }
+
+        // Dispose textures and sprites
+        if (hpbarTexture != null) {
+            hpbarTexture.dispose();
+        }
+
+        if (character.getTexture() != null) {
+            character.getTexture().dispose();
+        }
+
+        // Dispose intermission screen resources
+        if (intermissionScreen != null) {
+            intermissionScreen.dispose();
+        }
+
+        // Dispose game over screen resources
+        if (gameOver != null) {
+            gameOver.dispose();
+        }
+
+        // Dispose pause screen resources
+        if (pauseScreen != null) {
+            pauseScreen.dispose();
+        }
+
+        // Stop and dispose of background music
+        stopBackgroundMusic0();
     }
+
 
 
 }

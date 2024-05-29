@@ -90,7 +90,7 @@ public class GameOver implements Screen {
             // LEADERBOARD HERE
             if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
                 stopGameOverMusic();
-                world.dispose();
+                world.setGameDone();
             }
         } else if (counter == 1) {
             batch.draw(background2, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -135,12 +135,13 @@ public class GameOver implements Screen {
     @Override
     public void dispose() {
         playMusic = false; // Stop the music thread
-        try {
-            musicThread.join(); // Wait for the music thread to finish
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (musicThread != null) {
+            try {
+                musicThread.join(); // Wait for the music thread to finish
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
         batch.dispose();
         background.dispose();
         background2.dispose();
