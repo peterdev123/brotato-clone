@@ -25,7 +25,7 @@ public class Leaderboard implements Screen {
     private Texture background;
     private BitmapFont font, scoreFont;
     private StringBuilder inputTextBuilder = new StringBuilder();
-    private static final int MAX_CHARACTERS = 10;
+    private static final int MAX_CHARACTERS = 12;
     private InsertData insertData;
     private UpdateData updateData;
     private ReadData readData;

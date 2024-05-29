@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class InsertData {
+    //FOR DEBUG
     public static void main(String[] args) {
         try(Connection c = MySqlConnection.getConnection();
             PreparedStatement statement = c.prepareStatement(

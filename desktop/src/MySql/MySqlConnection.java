@@ -11,7 +11,7 @@ public class MySqlConnection {
     public static final String USERNAME = "root";
     public static final String PASSWORD ="";
 
-    static Connection getConnection(){
+    public static Connection getConnection(){
         Connection c = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
