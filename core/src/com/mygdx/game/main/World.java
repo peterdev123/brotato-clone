@@ -196,12 +196,12 @@ public class World implements Screen {
         }
 
         // GAMEOVER DEBUG
-        if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
-            gameOverScreenShown = true;
-            waveTimerThread.pauseTimer();
-            gameOver.show();
-            stopBackgroundMusic0();
-        }
+//        if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
+//            gameOverScreenShown = true;
+//            waveTimerThread.pauseTimer();
+//            gameOver.show();
+//            stopBackgroundMusic0();
+//        }
 
         // Pauses the Screen
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -418,8 +418,11 @@ public class World implements Screen {
 
     public void resetAll(){
         intermissionScreen.resetAllStatsBackToNormal();
-        titleFight.create();
-
+        player.resetHealth();
+        enemyHandler.clearEnemies();
+        waveTimerThread.setWaveTimer(30);
+        waveTimerThread.setWave(1);
+        gameOverScreenShown = false;
     }
 
     public void hideIntermissionScreen() {

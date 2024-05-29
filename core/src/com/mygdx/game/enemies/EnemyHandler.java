@@ -100,6 +100,10 @@ public class EnemyHandler {
         }
     }
 
+    public void clearEnemies() {
+        enemies.clear();
+    }
+
     public void handleWave(OrthographicCamera camera, int waveTimer) {
         spriteBatch.begin();
         stateTime += Gdx.graphics.getDeltaTime() * 0.45f;

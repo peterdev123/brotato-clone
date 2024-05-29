@@ -97,6 +97,7 @@ public class GameOver implements Screen {
             if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
                 // RESET GAME
                 stopGameOverMusic();
+                world.playBackgroundMusic0("assets/Audio/Game/BattleTheme.wav");
                 world.resetAll();
             }
         }

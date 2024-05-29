@@ -66,8 +66,12 @@ public class WaveHandler extends Thread {
         waveTimer = time;
     }
 
+    public void setWave() {
+        waveTimer += 1;
+    }
+
     public void setWave(int wave) {
-        currentWave += wave;
+        currentWave = wave;
     }
 
     public synchronized void pauseTimer() {
