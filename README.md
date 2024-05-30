@@ -1,10 +1,10 @@
-## Prerequisites
-# Before you start, ensure you have the following installed:
+# Prerequisites
+## Before you start, ensure you have the following installed:
 
 XAMPP for managing the SQL localhost database.
 IntelliJ IDEA (Ultimate or Community edition).
 
-# Setup Instructions 
+## Setup Instructions 
 Install XAMPP:
 
 Download and install XAMPP from the official website.
@@ -27,5 +27,5 @@ Navigate to desktop/src/com/mygdx/game/DesktopLauncher.java.
 Run the DesktopLauncher.java file.
 The game should now be running! Feel free to explore the code and make any modifications or updates to enhance the game.
 
-# Contributions
+## Contributions
 We welcome any modifications and updates. Feel free to improve the game and share your contributions with the community.
