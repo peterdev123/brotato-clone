@@ -2,6 +2,7 @@
 ## Before you start, ensure you have the following installed:
 
 XAMPP for managing the SQL localhost database.
+
 IntelliJ IDEA (Ultimate or Community edition).
 
 ## Setup Instructions 
@@ -19,6 +20,7 @@ Use the PHPMyAdmin interface to create a new database named exileddb.
 Clone the Repository:
 
 Clone this repository to your local machine.
+
 Run the Game:
 
 Open IntelliJ IDEA.
