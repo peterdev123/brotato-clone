@@ -24,9 +24,13 @@ Clone this repository to your local machine.
 Run the Game:
 
 Open IntelliJ IDEA.
+
 Open the cloned project folder.
+
 Navigate to desktop/src/com/mygdx/game/DesktopLauncher.java.
+
 Run the DesktopLauncher.java file.
+
 The game should now be running! Feel free to explore the code and make any modifications or updates to enhance the game.
 
 ## Contributions
